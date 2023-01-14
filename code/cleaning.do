@@ -4,7 +4,7 @@
 Purpose: 				Prepare data for analysis
 						
 						Author: Leonor Castro
-						Last Edited: 8 Jan 2023
+						Last Edited: 14 Jan 2023
 
 Overview
 	1. Set paths and globals
@@ -28,7 +28,10 @@ Overview
 	14. Final Main Dataset
 	15. Final Secondary Datasets
 		- Latinobarometro
-		- 1970 Health Statistics
+		- 1970 Health Statistics (county level)
+		- 1970 Health Statistics (area level)
+		- Mobility
+		- Fatalities
  
 ********************************************************************************
 1. Set paths and globals
@@ -778,9 +781,9 @@ Overview
 	rename 					sp34 sp37
 	rename 					s18 s16
 	foreach 				var of varlist _all {
-			if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
-				decode				`var', gen(`var'_string)
-				drop 				`var'
+		if						"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
+			decode					`var', gen(`var'_string)
+			drop 					`var'
 			}
 	}
 	save 				"$data_clean\Latinobarometro_1998_final.dta", replace
@@ -806,9 +809,9 @@ Overview
 	rename 				S16 s16
 	rename 				S1 s1
 	foreach 			var of varlist _all {
-			if				"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
-				decode			`var', gen(`var'_string)
-				drop 			`var'
+		if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
+			decode				`var', gen(`var'_string)
+			drop 				`var'
 			}
 	}
 	save 				"$data_clean\Latinobarometro_2000_final.dta", replace
@@ -831,10 +834,10 @@ Overview
 	rename 				s4 s5
 	rename 				s16a s16
 	foreach 			var of varlist _all {
-			if				"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
-				decode			`var', gen(`var'_string)
-				drop 			`var'
-			}
+		if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
+			decode				`var', gen(`var'_string)
+			drop 				`var'
+		}
 	}
 	save 			"$data_clean\Latinobarometro_2001_final.dta", replace
 
@@ -855,10 +858,10 @@ Overview
 	rename 				s4 s5
 	rename 				s20 s16
 	foreach 			var of varlist _all {
-			if				"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
-				decode			`var', gen(`var'_string)
-				drop 			`var'
-			}
+		if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
+			decode				`var', gen(`var'_string)
+			drop 				`var'
+		}
 	}
 	save 				"$data_clean\Latinobarometro_2002_final.dta", replace
 
@@ -882,10 +885,10 @@ Overview
 	rename 				p58st sp37
 	rename 				s4 s5
 	foreach 			var of varlist _all {
-			if				"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
-				decode			`var', gen(`var'_string)
-				drop 			`var'
-			}
+		if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
+			decode				`var', gen(`var'_string)
+			drop 				`var'
+		}
 	}
 	save 				"$data_clean\Latinobarometro_2003_final.dta", replace
 
@@ -912,10 +915,10 @@ Overview
 	rename 				s4 s5
 	rename 				s18 s16
 	foreach 			var of varlist _all {
-			if				"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
-				decode			`var', gen(`var'_string)
-				drop 			`var'
-			}
+		if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
+			decode				`var', gen(`var'_string)
+			drop 				`var'
+		}
 	}
 	save 				"$data_clean\Latinobarometro_2004_final.dta", replace
 
@@ -941,10 +944,10 @@ Overview
 	rename 				s9 s5
 	rename 				s24 s16
 	foreach 			var of varlist _all {
-			if				"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
-				decode			`var', gen(`var'_string)
-				drop 			`var'
-			}
+		if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
+			decode				`var', gen(`var'_string)
+			drop 				`var'
+		}
 	}
 	save 				"$data_clean\Latinobarometro_2005_final.dta", replace
 
@@ -970,10 +973,10 @@ Overview
 	rename 				s9 s5
 	rename 				s24 s16
 	foreach 			var of varlist _all {
-			if				"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
-				decode			`var', gen(`var'_string)
-				drop 			`var'
-			}
+		if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
+			decode				`var', gen(`var'_string)
+			drop 				`var'
+		}
 	}
 	save 				"$data_clean\Latinobarometro_2006_final.dta", replace
 
@@ -999,10 +1002,10 @@ Overview
 	rename 				s13 s5
 	rename 				s28 s16
 	foreach 			var of varlist _all {
-			if				"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
-				decode			`var', gen(`var'_string)
-				drop 			`var'
-			}
+		if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
+			decode				`var', gen(`var'_string)
+			drop 				`var'
+		}
 	}
 	save 				"$data_clean\Latinobarometro_2007_final.dta", replace
 
@@ -1028,10 +1031,10 @@ Overview
 	rename 				s3 s5
 	rename 				s26 s16
 	foreach 			var of varlist _all {
-			if				"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
-				decode			`var', gen(`var'_string)
-				drop 			`var'
-			}
+		if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
+			decode				`var', gen(`var'_string)
+			drop 				`var'
+		}
 	}
 	save 				"$data_clean\Latinobarometro_2008_final.dta", replace
 
@@ -1058,10 +1061,10 @@ Overview
 	rename 				s3 s5
 	rename 				s26 s16
 	foreach 			var of varlist _all {
-			if				"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
-				decode			`var', gen(`var'_string)
-				drop 			`var'
-			}
+		if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
+			decode				`var', gen(`var'_string)
+			drop 				`var'
+		}
 	}
 	save 				"$data_clean\Latinobarometro_2009_final.dta", replace
 
@@ -1087,10 +1090,10 @@ Overview
 	rename 				S5 s5
 	rename 				S28 s16
 	foreach 			var of varlist _all {
-			if				"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
-				decode			`var', gen(`var'_string)
-				drop 			`var'
-			}
+		if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
+			decode				`var', gen(`var'_string)
+			drop 				`var'
+		}
 	}
 	save 				"$data_clean\Latinobarometro_2010_final.dta", replace
 
@@ -1112,10 +1115,10 @@ Overview
 	rename 				S34 s16
 	replace				numinves=2011
 	foreach 			var of varlist _all {
-			if				"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
-				decode			`var', gen(`var'_string)
-				drop 			`var'
-			}
+		if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
+			decode				`var', gen(`var'_string)
+			drop 				`var'
+		}
 	}
 	save 				"$data_clean\Latinobarometro_2011_final.dta", replace
 
@@ -1141,10 +1144,10 @@ Overview
 	rename 				S29 s16
 	replace				numinves=2015
 	foreach 			var of varlist _all {
-			if				"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
-				decode			`var', gen(`var'_string)
-				drop 			`var'
-			}
+		if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
+			decode				`var', gen(`var'_string)
+			drop 				`var'
+		}
 	}
 	save 				"$data_clean\Latinobarometro_2015_final.dta", replace
 
@@ -1168,10 +1171,10 @@ Overview
 	rename 				S5 s5
 	rename 				S22 s16
 	foreach 			var of varlist _all {
-			if				"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
-				decode			`var', gen(`var'_string)
-				drop 			`var'
-			}
+		if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
+			decode				`var', gen(`var'_string)
+			drop 				`var'
+		}
 	}
 	save 				"$data_clean\Latinobarometro_2016_final.dta", replace
 
@@ -1196,10 +1199,10 @@ Overview
 	rename 				S6 s5
 	rename 				S22 s16
 	foreach 			var of varlist _all {
-			if				"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
-				decode			`var', gen(`var'_string)
-				drop 			`var'
-			}
+		if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
+			decode				`var', gen(`var'_string)
+			drop 				`var'
+		}
 	}
 	save 				"$data_clean\Latinobarometro_2017_final.dta", replace
 
@@ -1236,10 +1239,10 @@ Overview
 	rename 				S26 s16
 	rename 				TAMCIUD tamciud
 	foreach 			var of varlist _all {
-			if				"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
-				decode			`var', gen(`var'_string)
-				drop 			`var'
-			}
+		if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
+			decode				`var', gen(`var'_string)
+			drop 				`var'
+		}
 	}
 	save 				"$data_clean\Latinobarometro_2018_final.dta", replace
 
@@ -1842,32 +1845,32 @@ Overview
 	merge 				m:1 comuna using "$data_clean\state_repression.dta"
 
 * Create impressionable years indicators 
-	gen 				impy1=0
-	replace 			impy1=1 if cohort==49 | cohort==73
-	replace 			impy1=2 if cohort==50 | cohort==72
-	replace 			impy1=3 if cohort==51 | cohort==71
-	replace 			impy1=4 if cohort==52 | cohort==70
-	replace 			impy1=5 if cohort==53 | cohort==69
-	replace 			impy1=6 if cohort==54 | cohort==68
-	replace 			impy1=7 if cohort==55 | cohort==67
-	replace 			impy1=8 if cohort>55 & cohort<67
-	gen 				impy2=0
-	replace 			impy2=1 if cohort==63 | cohort==73
-	replace 			impy2=2 if cohort==64 | cohort==72
-	replace 			impy2=3 if cohort==65 | cohort==71
-	replace 			impy2=4 if cohort>65 & cohort<71
+	gen 				impy1 = 0
+	replace 			impy1 = 1 if cohort == 49 | cohort == 73
+	replace 			impy1 = 2 if cohort == 50 | cohort == 72
+	replace 			impy1 = 3 if cohort == 51 | cohort == 71
+	replace 			impy1 = 4 if cohort == 52 | cohort == 70
+	replace 			impy1 = 5 if cohort == 53 | cohort == 69
+	replace 			impy1 = 6 if cohort == 54 | cohort == 68
+	replace 			impy1 = 7 if cohort == 55 | cohort == 67
+	replace 			impy1 = 8 if cohort > 55 & cohort < 67
+	gen 				impy2 = 0
+	replace 			impy2 = 1 if cohort == 63 | cohort == 73
+	replace 			impy2 = 2 if cohort == 64 | cohort == 72
+	replace 			impy2 = 3 if cohort == 65 | cohort == 71
+	replace 			impy2 = 4 if cohort > 65 & cohort<71
 
-* Create share variables are created
+* Create share variables
 	gen 				sh_vac_may23=vac_acc_may23/p_proj
 	gen 				sh_vac_ontime4=vac_ontime4/p_proj
 	gen 				shVictims_70_10=shVictims_70/10
 
 * Create main sample indicator
 	gen 				main_sample = 1
-	bysort 				comuna: egen vac_acc_may23_comuna = total(vac_acc_may23) if cohort>30
-	bysort 				comuna: egen p_proj_comuna = total(p_proj) if cohort>30
+	bysort 				comuna: egen vac_acc_may23_comuna = total(vac_acc_may23) if cohort > 30
+	bysort 				comuna: egen p_proj_comuna = total(p_proj) if cohort > 30
 	gen 				sh_vac_may23_comuna = vac_acc_may23_comuna/p_proj_comuna 
-	replace 			main_sample = 0 if sh_vac_may23_comuna>1
+	replace 			main_sample = 0 if sh_vac_may23_comuna > 1
 	drop 				vac_acc_may23_comuna p_proj_comuna sh_vac_may23_comuna
 
 * Rename/clean main state repression variales
@@ -1944,23 +1947,26 @@ Overview
 		gen 				`var'_impy1_county = `var'*impy1_county 
 		gen 				`var'_impy2_county = `var'*impy2_county 
 	}
+
+* Create share variables
+	gen 				sh_p_jur=(p_jur/p_proj)*1000
+	gen 				sh_locales=(n_locales/p_proj)*1000
+	gen 				sh_fall_prevac=fall_prevac/p_proj
+	gen 				sh_casos_prevac=casos_prevac/p_proj
+	
+* Variabel labels
 	label var 			ln_dist_mil_fac_impy1_county "Ln distance to military facility $\times$ County Imp. Years (1973-1990)"
 	label var 			ln_dist_mil_fac_impy2_county "Ln distance to military facility $\times$ County Imp. Years (1973-1976)"
 	label var 			Dregimientos_impy1_county "Indicator military presence $\times$ County Imp. Years (1973-1990)"
 	label var 			Dregimientos_impy2_county "Indicator military presence $\times$ County Imp. Years (1973-1976)"
-
-* Create share variables
-	gen 				sh_p_jur=(p_jur/p_proj)*1000
 	label var 			sh_p_jur "Legal entities per 1,000 inhab."
-	gen 				sh_locales=(n_locales/p_proj)*1000
-	gen 				sh_fall_prevac=fall_prevac/p_proj
-	gen 				sh_casos_prevac=casos_prevac/p_proj
 
-	save 				"$data_clean\finaldataset_main_collapsed.dta", replace
+	tempfile        main_collapsed
+	save            `main_collapsed'
 
 * LATINOBAROMETRO
 	use 				"$data_clean\latinobarometro_final.dta", clear
-	merge 				m:1 comuna cohort using "$data_clean\finaldataset_main.dta", ///
+	merge 				m:1 comuna cohort using `main_collapsed', ///
 							keep(match using) nogen
 
 	foreach 			latinob_var of varlist sp37 sp21 sp63a sp63b sp63d sp63e sp63g P20ST_I P16ST_G p63stc {
@@ -1969,128 +1975,152 @@ Overview
 	}
 	save 				"$data_clean\latinobarometro_final.dta", replace
 
-* 1970 HEALTH STATISTICS
+* 1970 HEALTH STATISTICS (county level)
 	import 				excel "$data_raw\salud_1971.xlsx", sheet("Sheet3") firstrow clear
-	merge 				m:m comuna using "$path3\finaldataset_main_collapsed.dta", ///
+	merge 				m:m comuna using `main_collapsed', ///
 							keep(match using) nogen
+							
+* Collapse data at county level
 	collapse 			(sum) consultas leche, ///
 							by(Dregimientos ln_dist_mil_fac Pop70 sh_rural_70 ///
 							lnDistStgo lnDistRegCapital share_allende70 share_alessandri70 ///
 							IDProv comuna latitud longitud area antivariolica antitifica ///
 							antidifterica mixta antipoliomielitica antisarampionosa antiinlfuenza)
-
-*Create share variables
+* Create share variables 
 	gen 				sh_consultas=consultas/Pop70
 	gen 				sh_leche=leche/Pop70
-
-*Variable labels 
+	
+* Variable labels 
 	label var 			sh_consultas "Medical appointments per capita in 1971"
 	label var 			sh_leche "Kg of milk distributed per capita in 1971"
+	
 	save 				"$data_clean\health1970_county_final.dta", replace
 
-	bysort area: egen Pop70_area=total(Pop70)
-	gen Dregimientos_area=(Dregimientos*Pop70)/Pop70_area
-	gen ln_dist_mil_fac_area=(ln_dist_mil_fac*Pop70)/Pop70_area
-	gen sh_rural_70_area=(sh_rural_70*Pop70)/Pop70_area
-	gen lnDistStgo_area=(lnDistStgo*Pop70)/Pop70_area
-	gen lnDistRegCapital_area=(lnDistRegCapital*Pop70)/Pop70_area
-	gen share_allende70_area=(share_allende70*Pop70)/Pop70_area
-	gen share_alessandri70_area=(share_alessandri70*Pop70)/Pop70_area
-	collapse (sum) Dregimientos_area ln_dist_mil_fac_area Pop70 sh_rural_70_area lnDistStgo_area lnDistRegCapital_area share_allende70_area share_alessandri70_area, by(area antivariolica antitifica antidifterica mixta antipoliomielitica antisarampionosa antiinlfuenza)
-	*Create share variables
-	foreach var in antivariolica antitifica antidifterica mixta antipoliomielitica antisarampionosa antiinlfuenza {
-		gen sh_`var'=`var'/Pop70
-	}
-	*Variable labels are established
-	label var sh_antivariolica "Share of vaccinated pop. for variola in 1971"
-	label var sh_antitifica "Share of vaccinated pop. for typhoid fever in 1971"
-	label var sh_antidifterica "Share of vaccinated pop. for diphtheria in 1971"
-	label var sh_mixta "Share of vaccinated pop. with mixed vaccine in 1971"
-	label var sh_antipoliomielitica "Share of vaccinated pop. for poliomyelitis in 1971"
-	label var sh_antisarampionosa "Share of vaccinated pop. for measles in 1971"
-	label var sh_antiinlfuenza "Share of vaccinated pop. for influenza in 1971"
-	save "$path3\Health1970_area_final.dta", replace
+* 1970 HEALTH STATISTICS (area level)
 
-	clear
-	use "$path2\movilidad_isci.dta"
-	merge m:1 comuna using "$path3\FinalDataset_Vaccination_collapsed.dta"
-	drop _merge
-	gen fase_1=0
-	replace fase_1=1 if paso==1
-	gen critic_period=0
-	replace critic_period=1 if semana>=23 & semana<35
-	gen critic_period1=0
-	replace critic_period1=1 if semana==23 | semana==24 | semana==25 | semana==26 | semana==27 | semana==28
-	gen critic_period2=0
-	replace critic_period2=1 if semana==29 | semana==30 | semana==31 | semana==32 | semana==33 | semana==34
-	foreach milfac_var in shVictims_70_10 DVictims DCentroDetencion ln_centro_det ln_dist_mil_fac Dregimientos {
-		gen `milfac_var'_f1=`milfac_var'*fase_1
-		gen `milfac_var'_f1_impy2=`milfac_var'_impy2_county*fase_1
-		gen `milfac_var'_f1_impy1=`milfac_var'_impy1_county*fase_1
-	}
-	gen f1_impy2=impy2_county*fase_1
-	gen f1_impy1=impy1_county*fase_1
-	foreach milfac_var in shVictims_70_10 DVictims DCentroDetencion ln_centro_det ln_dist_mil_fac Dregimientos {
-		gen `milfac_var'_impy2cp1=`milfac_var'_impy2_county*critic_period1
-		gen `milfac_var'_impy2cp2=`milfac_var'_impy2_county*critic_period2
-		gen `milfac_var'_impy2cp=`milfac_var'_impy2_county*critic_period
-		gen `milfac_var'_cp1=`milfac_var'*critic_period1
-		gen `milfac_var'_cp2=`milfac_var'*critic_period2
-		gen `milfac_var'_cp=`milfac_var'*critic_period
-	}
-	gen impy2_cp1=impy2_county*critic_period1
-	gen impy2_cp2=impy2_county*critic_period2
-	gen impy2_cp=impy2_county*critic_period
-	label var ln_dist_mil_fac_f1 "Ln distance to military facility $\times$ Phase 1"
-	label var Dregimientos_f1 "Indicator military presence $\times$ Phase 1"
-	label var ln_dist_mil_fac_f1_impy2 "Ln distance to military facility $\times$ Phase 1 $\times$ County Imp. Years (1973-1976)"
-	label var Dregimientos_f1_impy2 "Indicator military presence $\times$ Phase 1 $\times$ County County Imp. Years (1973-1976)"
-	label var f1_impy2 "Phase 1 $\times$ Imp. Years (1973-1976)"
-	label var f1_impy1 "Phase 1 $\times$ Imp. Years (1973-1990)"
-	label var ln_dist_mil_fac_impy2cp1 "Ln distance to military facility $\times$ County Imp. Years (1973-1976) $\times$ Critical Period 1"
-	label var Dregimientos_impy2cp1 "Indicator military presence $\times$ County Imp. Years (1973-1976) $\times$ Critical Period 1"
-	label var ln_dist_mil_fac_impy2cp2 "Ln distance to military facility $\times$ County Imp. Years (1973-1976) $\times$ Critical Period 2"
-	label var Dregimientos_impy2cp2 "Indicator military presence $\times$ County Imp. Years (1973-1976) $\times$ Critical Period 2"
-	label var ln_dist_mil_fac_impy2cp "Ln distance to military facility $\times$ County Imp. Years (1973-1976) $\times$ Critical Period"
-	label var Dregimientos_impy2cp "Indicator military presence $\times$ County Imp. Years (1973-1976) $\times$ Critical Period"
-	label var ln_dist_mil_fac_cp1 "Ln distance to military facility $\times$ Critical Period 1"
-	label var Dregimientos_cp1 "Indicator military presence $\times$ Critical Period 1"
-	label var ln_dist_mil_fac_cp2 "Ln distance to military facility $\times$ Critical Period 2"
-	label var Dregimientos_cp2 "Indicator military presence $\times$ Critical Period 2"
-	label var ln_dist_mil_fac_cp "Ln distance to military facility $\times$ Critical Period"
-	label var Dregimientos_cp "Indicator military presence $\times$ Critical Period"
-	label var fase_1 "Phase 1"
-	label var impy2_cp1 "County Imp. Years (1973-1976) $\times$ Critical Period 1"
-	label var impy2_cp2 "County Imp. Years (1973-1976) $\times$ Critical Period 2"
-	label var impy2_cp "County Imp. Years (1973-1976) $\times$ Critical Period"
-	label var var_salidas "Mobility"
-	label var sh_casos_prevac "Sh. COVID cases"
-	label var sh_fall_prevac "Sh. COVID deaths"
-	save "$path3\movilidad_final.dta", replace
+* Create share variables 
+	bysort area:		egen Pop70_area=total(Pop70)
+	gen 				Dregimientos_area=(Dregimientos*Pop70)/Pop70_area
+	gen 				ln_dist_mil_fac_area=(ln_dist_mil_fac*Pop70)/Pop70_area
+	gen 				sh_rural_70_area=(sh_rural_70*Pop70)/Pop70_area
+	gen 				lnDistStgo_area=(lnDistStgo*Pop70)/Pop70_area
+	gen 				lnDistRegCapital_area=(lnDistRegCapital*Pop70)/Pop70_area
+	gen 				share_allende70_area=(share_allende70*Pop70)/Pop70_area
+	gen 				share_alessandri70_area=(share_alessandri70*Pop70)/Pop70_area
 
-	clear
-	use "$path3\FinalDataset_Vaccination.dta"
-	gen age_group=""
-	replace age_group="40a49" if cohort>=40 & cohort<50
-	replace age_group="50a59" if cohort>=50 & cohort<60
-	replace age_group="60a69" if cohort>=60 & cohort<70
-	replace age_group="70a79" if cohort>=70 & cohort<80
-	drop if age_group==""
-	collapse (sum) p_proj, by(age_group comuna code Dregimientos ln_dist_mil_fac latitud longitud)
-	merge 1:1 age_group code using "$path2\fallecidos_comuna_edad.dta"
-	drop if _merge!=3
-	drop _merge
-	gen sh_fall_prevac_cohort=fall_prevac_cohort/p_proj
-	egen mean_sh_fall_prevac_cohort = mean(sh_fall_prevac_cohort), by(age_group)
-	egen sd_sh_fall_prevac_cohort = sd(sh_fall_prevac_cohort), by(age_group)
-	gen z_fall_prevac_cohort = (sh_fall_prevac_cohort - mean_sh_fall_prevac_cohort) / sd_sh_fall_prevac_cohort
-	save "$path3\fallecidos_final.dta", replace
+* Collapse data at area level
+	collapse 			(sum) Dregimientos_area ln_dist_mil_fac_area Pop70 ///
+							sh_rural_70_area lnDistStgo_area lnDistRegCapital_area ///
+							share_allende70_area share_alessandri70_area, ///
+							by(area antivariolica antitifica antidifterica mixta antipoliomielitica antisarampionosa antiinlfuenza)
+							
+*Create share variables 
+	foreach 			var in antivariolica antitifica antidifterica mixta ///
+							antipoliomielitica antisarampionosa antiinlfuenza {
+		gen 				sh_`var'=`var'/Pop70
+	}
+	
+* Variable labels 
+	label var 			sh_antivariolica "Share of vaccinated pop. for variola in 1971"
+	label var 			sh_antitifica "Share of vaccinated pop. for typhoid fever in 1971"
+	label var 			sh_antidifterica "Share of vaccinated pop. for diphtheria in 1971"
+	label var 			sh_mixta "Share of vaccinated pop. with mixed vaccine in 1971"
+	label var 			sh_antipoliomielitica "Share of vaccinated pop. for poliomyelitis in 1971"
+	label var 			sh_antisarampionosa "Share of vaccinated pop. for measles in 1971"
+	label var 			sh_antiinlfuenza "Share of vaccinated pop. for influenza in 1971"
+	
+	save 				"$data_clean\health1970_area_final.dta", replace
 
-	clear
-	use "$path5\camp_inf_nacional.dta"
-	merge m:1 comuna using "$path3\FinalDataset_Vaccination_collapsed.dta"
-	drop _merge
-	label var ln_dist_mil_fac_impy2_county "Ln distance to military facility $\times$ County Imp. Years (1973-1976)"
-	label var ln_dist_mil_fac "Ln distance to military facility"
-	label var sh_vac_inf "Influenza vaccination rate"
-	save "$path3\camp_inf_final.dta", replace
+* MOBILITY
+	use 				"$data_raw\movilidad_isci.dta", clear
+	merge 				m:1 comuna using `main_collapsed', nogen
+	
+* Create lockdown, critic periods indicators, and interactions
+	gen 				fase_1 = 0
+	replace 			fase_1 = 1 if paso == 1
+	gen 				critic_period = 0
+	replace 			critic_period = 1 if semana >= 23 & semana < 35
+	gen 				critic_period1 = 0
+	replace 			critic_period1 = 1 if semana >= 23 & semana < 29
+	gen 				critic_period2 = 0
+	replace 			critic_period2 = 1 if semana >= 29 & semana <35
+	gen 				f1_impy2=impy2_county*fase_1
+	gen 				f1_impy1=impy1_county*fase_1
+	gen 				impy2_cp1 = impy2_county*critic_period1
+	gen 				impy2_cp2 = impy2_county*critic_period2
+	gen 				impy2_cp = impy2_county*critic_period
+	
+	foreach 			milfac_var in shVictims_70_10 DVictims DCentroDetencion ///
+							ln_centro_det ln_dist_mil_fac Dregimientos {
+		gen 				`milfac_var'_f1 = `milfac_var'*fase_1
+		gen 				`milfac_var'_f1_impy2 = `milfac_var'_impy2_county*fase_1
+		gen 				`milfac_var'_f1_impy1 = `milfac_var'_impy1_county*fase_1
+		gen 				`milfac_var'_impy2cp1=`milfac_var'_impy2_county*critic_period1
+		gen 				`milfac_var'_impy2cp2=`milfac_var'_impy2_county*critic_period2
+		gen 				`milfac_var'_impy2cp=`milfac_var'_impy2_county*critic_period
+		gen 				`milfac_var'_cp1=`milfac_var'*critic_period1
+		gen 				`milfac_var'_cp2=`milfac_var'*critic_period2
+		gen 				`milfac_var'_cp=`milfac_var'*critic_period
+	}
+	
+* Variable labels 
+	label var 			ln_dist_mil_fac_f1 "Ln distance to military facility $\times$ Phase 1"
+	label var 			Dregimientos_f1 "Indicator military presence $\times$ Phase 1"
+	label var 			ln_dist_mil_fac_f1_impy2 "Ln distance to military facility $\times$ Phase 1 $\times$ County Imp. Years (1973-1976)"
+	label var 			Dregimientos_f1_impy2 "Indicator military presence $\times$ Phase 1 $\times$ County County Imp. Years (1973-1976)"
+	label var 			f1_impy2 "Phase 1 $\times$ Imp. Years (1973-1976)"
+	label var 			f1_impy1 "Phase 1 $\times$ Imp. Years (1973-1990)"
+	label var 			ln_dist_mil_fac_impy2cp1 "Ln distance to military facility $\times$ County Imp. Years (1973-1976) $\times$ Critical Period 1"
+	label var 			Dregimientos_impy2cp1 "Indicator military presence $\times$ County Imp. Years (1973-1976) $\times$ Critical Period 1"
+	label var 			ln_dist_mil_fac_impy2cp2 "Ln distance to military facility $\times$ County Imp. Years (1973-1976) $\times$ Critical Period 2"
+	label var 			Dregimientos_impy2cp2 "Indicator military presence $\times$ County Imp. Years (1973-1976) $\times$ Critical Period 2"
+	label var 			ln_dist_mil_fac_impy2cp "Ln distance to military facility $\times$ County Imp. Years (1973-1976) $\times$ Critical Period"
+	label var 			Dregimientos_impy2cp "Indicator military presence $\times$ County Imp. Years (1973-1976) $\times$ Critical Period"
+	label var 			ln_dist_mil_fac_cp1 "Ln distance to military facility $\times$ Critical Period 1"
+	label var 			Dregimientos_cp1 "Indicator military presence $\times$ Critical Period 1"
+	label var 			ln_dist_mil_fac_cp2 "Ln distance to military facility $\times$ Critical Period 2"
+	label var 			Dregimientos_cp2 "Indicator military presence $\times$ Critical Period 2"
+	label var 			ln_dist_mil_fac_cp "Ln distance to military facility $\times$ Critical Period"
+	label var 			Dregimientos_cp "Indicator military presence $\times$ Critical Period"
+	label var 			fase_1 "Phase 1"
+	label var 			impy2_cp1 "County Imp. Years (1973-1976) $\times$ Critical Period 1"
+	label var 			impy2_cp2 "County Imp. Years (1973-1976) $\times$ Critical Period 2"
+	label var 			impy2_cp "County Imp. Years (1973-1976) $\times$ Critical Period"
+	label var 			var_salidas "Mobility"
+	label var 			sh_casos_prevac "Sh. COVID cases"
+	label var 			sh_fall_prevac "Sh. COVID deaths"
+	
+	save 				"$data_clean\movilidad_final.dta", replace
+
+* FATALITIES
+	use 				"$path3\FinalDataset_Vaccination.dta"
+	gen 				age_group=""
+	replace 			age_group="40a49" if cohort>=40 & cohort<50
+	replace 			age_group="50a59" if cohort>=50 & cohort<60
+	replace 			age_group="60a69" if cohort>=60 & cohort<70
+	replace 			age_group="70a79" if cohort>=70 & cohort<80
+	drop if 			age_group==""
+	
+* Collapse data at age group level
+	collapse 			(sum) p_proj, ///
+							by(age_group comuna code Dregimientos ln_dist_mil_fac latitud longitud)
+	merge 				1:1 age_group code using "$data_raw\fallecidos_comuna_edad.dta", ///
+							keep(match) nogen
+
+* Create share variables
+	gen 				sh_fall_prevac_cohort=fall_prevac_cohort/p_proj
+	egen 				mean_sh_fall_prevac_cohort = mean(sh_fall_prevac_cohort), by(age_group)
+	egen 				sd_sh_fall_prevac_cohort = sd(sh_fall_prevac_cohort), by(age_group)
+	gen 				z_fall_prevac_cohort = (sh_fall_prevac_cohort - mean_sh_fall_prevac_cohort) / sd_sh_fall_prevac_cohort
+	save 				"$data_clean\fallecidos_final.dta", replace
+
+* INFLUENZA VACCINATION CAMPAING
+	use 				"$data_raw\camp_inf_nacional.dta", clear
+	merge 				m:1 comuna using `main_collapsed', nogen
+
+* Variable labels
+	label 				var ln_dist_mil_fac_impy2_county "Ln distance to military facility $\times$ County Imp. Years (1973-1976)"
+	label 				var ln_dist_mil_fac "Ln distance to military facility"
+	label 				var sh_vac_inf "Influenza vaccination rate"
+
+	save 				"$data_clean\camp_inf_final.dta", replace
