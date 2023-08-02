@@ -34,21 +34,20 @@ Overview
 		- Fatalities
  
 ********************************************************************************
-1. Set paths and globals
+ 1. Set paths and globals
 ********************************************************************************/
 
-	clear 				all 
+	clear 			all 
 
-*Set paths
-	global 				data_raw "C:\Users\56962\Documents\GitHub\me_thesis\data\raw"
-	global 				data_clean "C:\Users\56962\Documents\GitHub\me_thesis\data\clean"
+	global 			data_raw "C:\Users\lc429\Documents\GitHub\me_thesis\data\raw"
+	global 			data_clean "C:\Users\lc429\Documents\GitHub\me_thesis\data\clean"
 
 /*******************************************************************************
-2. Data on the number of vaccinated people per date and cohort 
+ 2. Data on the number of vaccinated people per date and cohort 
  Extracted from: https://github.com/MinCiencia/Datos-COVID19 (product 81)
 ********************************************************************************/
 	
-	local 				list_dates_1 mar2 mar3 mar4 mar5 mar6 mar7 mar8 mar9 mar10 ///
+	local 			list_dates_1 mar2 mar3 mar4 mar5 mar6 mar7 mar8 mar9 mar10 ///
 						mar11 mar12 mar13 mar14 mar15 mar16 mar17 mar18 mar19 mar20 ///
 						mar21 mar22 mar23 mar24 mar25 mar26 mar27 mar28 mar29 mar30 ///
 						mar31 abr1 abr2 abr3 abr4 abr5 abr6 abr7 abr9 abr10 abr11 ///
@@ -62,7 +61,7 @@ Overview
 						jul14 jul17 jul19 jul20 jul23 jul25 jul26 jul29 jul30 ago1 ///
 						ago2 ago4 ago10 ago12
 						
-	local 				list_dates_u jun12 jun13 jun14 jun15 jun16 jun17 jun19 jun22 ///
+	local 			list_dates_u jun12 jun13 jun14 jun15 jun16 jun17 jun19 jun22 ///
 						jun23 jun24 jun25 jun26 jun27 jun29 jun30 jul1 jul2 jul3 ///
 						jul5 jul6 jul7 jul8 jul9 jul10 jul11 jul12 jul14 jul17 ///
 						jul19 jul20 jul23 jul25 jul26 jul29 jul30 ago1 ago2 ago4 ///
@@ -71,13 +70,16 @@ Overview
 * FIRST SHOT
 * For each DB (corresponding to each date where data on covid vaccination has been updated)
 
-	foreach 			date of local list_dates_1 {
-		import 				delimited "$data_raw\vaccination\vacunacion_comuna_edad_1eraDosis_`date'.txt", clear
-		*Correct variable names
-		forvalues 			i=15/80 {
+	foreach 			date of local list_dates_1 {							// loop over dates
+	
+		import 				delimited "${data_raw}\vaccination\vacunacion_comuna_edad_1eraDosis_`date'.txt", clear
+		
+	*Correct variable names
+		forvalues 			i = 15/80 {											// loop over age
 			local 				j = `i' - 9
 			cap rename 			v`j' vac1_acc_`date'`i'
-		}
+		} // end of i
+		
 		rename 				codigocomuna code 
 		*Drop observations from unknown counties
 		drop 				if code==.
@@ -87,32 +89,39 @@ Overview
 		label var 			vac1_acc_`date' "Population vaccinated with first dose at `date' (DEIS)"
 		*Save each dataset
 		keep 				code cohort vac1_* comuna
-		save 				"$data_clean\vacunacion_comuna_edad_1eraDosis_`date'.dta", replace
-	}
+		save 				"${data_clean}\vacunacion_comuna_edad_1eraDosis_`date'.dta", replace
+		
+	}	// end of date
 	
 * Merge datasets
-	use 				"$data_clean\vacunacion_comuna_edad_1eraDosis_mar2.dta"
-	foreach 			date of local list_dates_1 {
+	use 				"${data_clean}\vacunacion_comuna_edad_1eraDosis_mar2.dta"
+	
+	foreach 			date of local list_dates_1 {							// loop over dates
+	
 		if				"`date'" != "mar2" {
 			merge 				1:1 code cohort using ///
-									"$data_clean\vacunacion_comuna_edad_1eraDosis_`date'.dta", ///
+									"${data_clean}\vacunacion_comuna_edad_1eraDosis_`date'.dta", ///
 									nogen
-			erase				"$data_clean\vacunacion_comuna_edad_1eraDosis_`date'.dta"
+			erase				"${data_clean}\vacunacion_comuna_edad_1eraDosis_`date'.dta"
+			
 		}
-	}
-	save 				"$data_clean\vacunacion_comuna_edad_1eraDosis.dta", replace
-	erase				"$data_clean\vacunacion_comuna_edad_1eraDosis_mar2.dta"
+	} // end of date
+	
+	save 				"${data_clean}\vacunacion_comuna_edad_1eraDosis.dta", replace
+	erase				"${data_clean}\vacunacion_comuna_edad_1eraDosis_mar2.dta"
 
 * UNIQUE SHOT
 * For each DB (corresponding to each date where data on covid vaccination has been updated)
 
-	foreach 			date of local list_dates_u {
-		import 				delimited "$data_raw\vaccination\vacunacion_comuna_edad_UnicaDosis_`date'.txt", clear
+	foreach 			date of local list_dates_u {							// loop over dates
+	
+		import 				delimited "${data_raw}\vaccination\vacunacion_comuna_edad_UnicaDosis_`date'.txt", clear
 		*Correct variable names 
-		forvalues 			i=15/80 {
+		forvalues 			i = 15/80 {
 			local 				j = `i' - 9
 			cap rename 			v`j' vacu_acc_`date'`i'
 		}
+		
 		rename 				codigocomuna code 
 		*Drop observations from unknown counties
 		drop 			if code==.
@@ -122,38 +131,41 @@ Overview
 		label var 		vacu_acc_`date' "Population vaccinated with unique dose at `date' (DEIS)"
 		*Save each dataset
 		keep 			code cohort vacu_* comuna
-		save 			"$data_clean\vacunacion_comuna_edad_UnicaDosis_`date'.dta", replace
+		save 			"${data_clean}\vacunacion_comuna_edad_UnicaDosis_`date'.dta", replace
 		clear
-	}
+		
+	} // end of date
 
 * Merge datasets
-	use 				"$data_clean\vacunacion_comuna_edad_UnicaDosis_jun12.dta"
-	foreach 			date of local list_dates_u {
+	use 				"${data_clean}\vacunacion_comuna_edad_UnicaDosis_jun12.dta"
+	
+	foreach 			date of local list_dates_u {							// loop over dates
+	
 		if					"`date'" != "jun12" {
-			merge 			1:1 code cohort using "$data_clean\vacunacion_comuna_edad_UnicaDosis_`date'.dta", nogen
-			erase				"$data_clean\vacunacion_comuna_edad_UnicaDosis_`date'.dta"
+			merge 			1:1 code cohort using "${data_clean}\vacunacion_comuna_edad_UnicaDosis_`date'.dta", nogen
+			erase				"${data_clean}\vacunacion_comuna_edad_UnicaDosis_`date'.dta"
 			}
-	}
+	} // end of date
 
-	save 				"$data_clean\vacunacion_comuna_edad_UnicaDosis.dta", replace
-	erase				"$data_clean\vacunacion_comuna_edad_UnicaDosis_jun12.dta"
+	save 				"${data_clean}\vacunacion_comuna_edad_UnicaDosis.dta", replace
+	erase				"${data_clean}\vacunacion_comuna_edad_UnicaDosis_jun12.dta"
 
 * COMBINE DATA FOR FIRST AND UNIQUE SHOTS
 
-	use 				"$data_clean\vacunacion_comuna_edad_1eraDosis.dta", clear
+	use 				"${data_clean}\vacunacion_comuna_edad_1eraDosis.dta", clear
 	merge 				1:1 code cohort comuna using ///
-							"$data_clean\vacunacion_comuna_edad_UnicaDosis.dta", nogen
+							"${data_clean}\vacunacion_comuna_edad_UnicaDosis.dta", nogen
 
-	foreach 			date of local list_dates_u {
+	foreach 			date of local list_dates_u {							// loop over dates
 		egen 				vac_acc_`date' = rowtotal(vac1_acc_`date' vacu_acc_`date')
-	}
+	} // end of date
 	
-	foreach 			date of local list_dates_1 {
+	foreach 			date of local list_dates_1 {							// loop over dates
 		cap	clonevar		vac_acc_`date' = vac1_acc_`date'
 		cap drop 			vac1_acc_`date' vacu_acc_`date'
 		label var 			vac_acc_`date' ///
 								"Population vaccinated with 1st or unique dose at `date' (DEIS)"
-	}
+	} // end of date
 
 *Variables of the number of pleople vaccinated on time are created
 	gen 				vac_ontime4 = .
@@ -209,19 +221,19 @@ Overview
 	label 				var vac_ontime4 "Pop. vaccinated on time with 1st or unique dose acc. to nat. schedule + 21 days"
 
 *Clean county names so then the data can be merged with other datasets
-	replace 			comuna=upper(comuna)
-	replace 			comuna=usubinstr(comuna, "ñ", "N", .)
-	replace 			comuna=usubinstr(comuna, "á", "A", .)
-	replace 			comuna=usubinstr(comuna, "é", "E", .)
-	replace 			comuna=usubinstr(comuna, "í", "I", .)
-	replace 			comuna=usubinstr(comuna, "ó", "O", .)
-	replace 			comuna=usubinstr(comuna, "ú", "U", .)
-	replace 			comuna=usubinstr(comuna, "Ñ", "N", .)
-	replace 			comuna=usubinstr(comuna, "Á", "A", .)
-	replace 			comuna=usubinstr(comuna, "É", "E", .)
-	replace 			comuna=usubinstr(comuna, "Í", "I", .)
-	replace 			comuna=usubinstr(comuna, "Ó", "O", .)
-	replace 			comuna=usubinstr(comuna, "Ú", "U", .)
+	replace 			comuna = upper(comuna)
+	replace 			comuna = usubinstr(comuna, "ñ", "N", .)
+	replace 			comuna = usubinstr(comuna, "á", "A", .)
+	replace 			comuna = usubinstr(comuna, "é", "E", .)
+	replace 			comuna = usubinstr(comuna, "í", "I", .)
+	replace 			comuna = usubinstr(comuna, "ó", "O", .)
+	replace 			comuna = usubinstr(comuna, "ú", "U", .)
+	replace 			comuna = usubinstr(comuna, "Ñ", "N", .)
+	replace 			comuna = usubinstr(comuna, "Á", "A", .)
+	replace 			comuna = usubinstr(comuna, "É", "E", .)
+	replace 			comuna = usubinstr(comuna, "Í", "I", .)
+	replace 			comuna = usubinstr(comuna, "Ó", "O", .)
+	replace 			comuna = usubinstr(comuna, "Ú", "U", .)
 	replace 			comuna = "AISEN" if comuna == "AYSEN"
 	replace 			comuna = "CABO HORNOS" if comuna == "CABO DE HORNOS"
 	replace 			comuna = "LA CALERA" if comuna == "CALERA"
@@ -231,13 +243,13 @@ Overview
 
 	drop 				if cohort==.
 	keep 				comuna code cohort vac_ontime4 vac_acc_may23
-	save 				"$data_clean\vacunacion.dta", replace
+	save 				"${data_clean}\vacunacion.dta", replace
 
 /*******************************************************************************
-3. Data on the number of vaccination centers per county
+ 3. Data on the number of vaccination centers per county
 ********************************************************************************/
 
-	use 				"$data_raw\establecimientos_direcc.dta", clear
+	use 				"${data_raw}\establecimientos_direcc.dta", clear
 
 *Adjust county names so then the data can be merged with other datasets
 	replace 			comuna = "CHOLCHOL" if comuna == "CHOL-CHOL"
@@ -252,21 +264,22 @@ Overview
 
 	label var 			n_locales "Number of vaccination centers per county"
 
-	merge 				1:m comuna using "$data_clean\vacunacion.dta", ///
+	merge 				1:m comuna using "${data_clean}\vacunacion.dta", ///
 							keep(match using) nogen
 
-	save 				"$data_clean\vacunacion.dta", replace
+	save 				"${data_clean}\vacunacion.dta", replace
 
 /*******************************************************************************
-4. Data on population projections for 2020 
+ 4. Data on population projections for 2020 
  Extracted from: https://www.ine.cl/estadisticas/sociales/demografia-y-vitales/proyecciones-de-poblacion
 ********************************************************************************/
 	
-	import 				delimited "$data_raw\poblacion_comuna_edad.txt", clear
+	import 				delimited "${data_raw}\poblacion_comuna_edad.txt", clear
 	
 *Correct variable names 
 	drop v6 v7 v8
-	forvalues 			i=15/80 {
+	
+	forvalues 			i = 15/80 {
 		local 				j = `i' - 6
 		rename 				v`j' p_proj`i'
 	}
@@ -280,15 +293,15 @@ Overview
 *Variable labels
 	label var 			p_proj "Population projection for 2020 (INE)"
 
-	save 				"$data_clean\proyecciones_getario.dta", replace
+	save 				"${data_clean}\proyecciones_getario.dta", replace
 
 /*******************************************************************************
-5. Data on the "Plan Paso a Paso" and lockdowns
+ 5. Data on the "Plan Paso a Paso" and lockdowns
  Extracted from: https://github.com/MinCiencia/Datos-COVID19 (PRODUCT 74 & 29)
 ********************************************************************************/
 
 *PLAN PASO A PASO
-	import 				delimited "$data_raw\paso_a_paso.txt", clear
+	import 				delimited "${data_raw}\paso_a_paso.txt", clear
 
 *Correct variable names
 	foreach 			var of varlist v* {
@@ -318,13 +331,13 @@ Overview
 	label var 			fase1_total "Total days on phase 1 (DEIS)"
 	label var 			fase1_prevac "Numbers of days on phase 1 until start of vaccination campaign (DEIS)"
 
-	save 				"$data_clean\paso_a_paso.dta", replace
+	save 				"${data_clean}\paso_a_paso.dta", replace
 
 *LOCKDOWNS (PRE-PLAN PASO A PASO)
-	import 				delimited "$data_raw\cuarentenas_historicas.txt", clear
+	import 				delimited "${data_raw}\cuarentenas_historicas.txt", clear
 
-	rename 				fechadetãrmino fechadetermino
-	rename 				cãdigocutcomuna code
+	rename 				fechadetérmino fechadetermino
+	rename 				códigocutcomuna code
 
 	gen 				fechai_aux = substr(fechadeinicio, 1,10)
 	gen 				fechat_aux = substr(fechadetermino, 1,10)
@@ -342,7 +355,7 @@ Overview
 	label var 			cuaren "Numbers of days under lockdown until start of Plan Paso a Paso (DEIS)"
 
 * COMBINE DATA
-	merge 				m:m code using "$data_clean\paso_a_paso.dta", nogen
+	merge 				m:m code using "${data_clean}\paso_a_paso.dta", nogen
 	
 *Total number of days under lockdown
 	egen 				lockd_prevac=rowtotal(cuaren fase1_prevac)
@@ -352,16 +365,16 @@ Overview
 	label var 			lockd_prevac "Days under lockdown or phase 1 until start of vaccination campaign (DEIS)"
 	label var 			lockd_total "Total days under lockdown or phase 1 (DEIS)"
 
-	save 				"$data_clean\fase1.dta", replace
+	save 				"${data_clean}\fase1.dta", replace
 
-	erase				"$data_clean\paso_a_paso.dta"
+	erase				"${data_clean}\paso_a_paso.dta"
 	
 /*******************************************************************************
-6. Numer of fatalities per day and county 
+ 6. Numer of fatalities per day and county 
  Extracted from: https://github.com/MinCiencia/Datos-COVID19
 ********************************************************************************/
 
-	import 			delimited "$data_raw\fallecidos.txt", clear
+	import 			delimited "${data_raw}\fallecidos.txt", clear
 
 * Correct variable names
 	foreach 		var of varlist v* {
@@ -387,14 +400,14 @@ Overview
 
 	keep 			code sh_fall_prevac fall_prevac
 
-	save 			"$data_clean\fallecidos.dta", replace
+	save 			"${data_clean}\fallecidos.dta", replace
 
 /*******************************************************************************
-7. Numer of fatalities cohort, per day, and county 
+ 7. Numer of fatalities cohort, per day, and county 
  Extracted from: https://github.com/MinCiencia/Datos-COVID19 (product 84)
 ********************************************************************************/
 	
-	import 			delimited "$data_raw\fallecidos_comuna_edad.txt", clear
+	import 			delimited "${data_raw}\fallecidos_comuna_edad.txt", clear
 
 * Correct variable names
 	foreach 		var of varlist v* {
@@ -426,14 +439,14 @@ Overview
 
 	encode 			age_group, gen(IDage_group)
 
-	save 			"$data_clean\fallecidos_comuna_edad.dta", replace
+	save 			"${data_clean}\fallecidos_comuna_edad.dta", replace
 
 /*******************************************************************************
-8. Number of COVID cases per day and county
+ 8. Number of COVID cases per day and county
  Extracted from: https://github.com/MinCiencia/Datos-COVID19
 ********************************************************************************/
 
-	import 			delimited "$data_raw\casos_incrementales.txt", clear
+	import 			delimited "${data_raw}\casos_incrementales.txt", clear
 
 * Correct variable names
 	foreach 		var of varlist v* {
@@ -458,14 +471,14 @@ Overview
 	*Dejamos solos las variables a utilizar
 	keep 			code casos_prevac 
 
-	save 			"$data_clean\casos_incrementales.dta", replace
+	save 			"${data_clean}\casos_incrementales.dta", replace
 
 /*******************************************************************************
-9. Mobility data
+ 9. Mobility data
  Extracted from: https://github.com/MinCiencia/Datos-COVID19/tree/master/output/producto33
 ********************************************************************************/
 
-	import 			delimited "$data_raw\movilidad_isci.csv", clear
+	import 			delimited "${data_raw}\movilidad_isci.csv", clear
 	keep 			semana paso nom_comuna fecha* var_salidas
 	rename 			nom_comuna comuna
 
@@ -543,16 +556,16 @@ Overview
 	replace 		comuna = "COMBARBALA" if comuna == "COMBARBALÃ"
 	replace 		comuna = "CONSTITUCION" if comuna == "CONSTITUCIÃN"
 
-	save 			"$data_clean\movilidad_isci.dta", replace
+	save 			"${data_clean}\movilidad_isci.dta", replace
 
 /*******************************************************************************
-10. Data on the 2020 influenza vaccination campaign
+ 10. Data on the 2020 influenza vaccination campaign
 *Extracted form: http://cognos.deis.cl/ibmcognos/cgi-bin/cognos.cgi?b_action=cognosViewer&ui.action=run&ui.object=%2fcontent%2ffolder%5b%40name%3d%27PUB%27%5d%2ffolder%5b%40name%3d%27REPORTES%27%5d%2ffolder%5b%40name%3d%27Inmunizacion%20Influenza%27%5d%2freport%5b%40name%3d%27Campa%c3%b1a%202020%20-%20Cobertura%27%5d&ui.name=Campa%c3%b1a%202020%20-%20Cobertura&cv.toolbar=false&cv.header=false&run.outputFormat=&run.prompt=false
 ********************************************************************************/
 
 	foreach 			region in I II III IV V VI VII VIII IX X XI XII RM XIV XV XVI {
 	* Import data from excel, where each sheet corresponds to a region
-		import 				excel "$data_raw\camp_inf_nacional.xlsx", ///
+		import 				excel "${data_raw}\camp_inf_nacional.xlsx", ///
 								sheet("`region'") firstrow clear
 
 		drop 				if missing(B)
@@ -579,16 +592,16 @@ Overview
 		rename 				B group
 		encode 				group, gen(IDgroup)
 	* Save datasets
-		save 				"$data_clean\camp_inf`region'.dta", replace
+		save 				"${data_clean}\camp_inf`region'.dta", replace
 	}
 
 	*Combine datasets
-	use 					"$data_clean\camp_infI.dta", clear
+	use 					"${data_clean}\camp_infI.dta", clear
 	foreach 				region in II III IV V VI VII VIII IX X XI XII RM XIV XV XVI {
-		append 				using "$data_clean\camp_inf`region'.dta", force
-		erase 				"$data_clean\camp_inf`region'.dta"
+		append 				using "${data_clean}\camp_inf`region'.dta", force
+		erase 				"${data_clean}\camp_inf`region'.dta"
 	}
-	erase 				"$data_clean\camp_infI.dta"
+	erase 				"${data_clean}\camp_infI.dta"
 
 * Clean county names so then the data can be merged with other datasets
 	replace 				comuna = upper(comuna)
@@ -618,7 +631,7 @@ Overview
 	label var				p_obj "P. objetivo camp. vacunacion influenza 2020 (DEIS)"
 	label var				vac_inf "Vac. adm. camp. vacunacion influenza 2020 (DEIS)"
 
-	save 					"$data_clean\camp_inf_nacional.dta", replace
+	save 					"${data_clean}\camp_inf_nacional.dta", replace
 
 /*******************************************************************************
 11. Legal entities registration
@@ -628,42 +641,42 @@ Overview
 								Valparaiso Ohiggins Maule Biobio Araucania LosLagos ///
 								Aysen Magallanes Metropolitana LosRios AricaParinacota Ñuble {
 		* Import data from excel, where each sheet corresponds to a region
-		import 					excel "$data_raw\personas_juridicas.xlsx", ///
+		import 					excel "${data_raw}\personas_juridicas.xlsx", ///
 									sheet("`region'") firstrow clear
 		keep 					COMUNA
 		rename 					COMUNA comuna
 		gen 					p_jur = 1
 		* Collapse data so each observation corresponds to a county, and calculate total number of legal entities
 		collapse 				(sum) p_jur, by(comuna)
-		save 					"$data_clean\personas_juridicas_`region'.dta", replace
+		save 					"${data_clean}\personas_juridicas_`region'.dta", replace
 	}
 
 * Combine data
-	use 					"$data_clean\personas_juridicas_Tarapaca.dta", clear
+	use 					"${data_clean}\personas_juridicas_Tarapaca.dta", clear
 	foreach 				region in Antofagasta Atacama Coquimbo Valparaiso Ohiggins ///
 								Maule Biobio Araucania LosLagos Aysen Magallanes ///
 								Metropolitana LosRios AricaParinacota Ñuble {
-		append 					using "$data_clean\personas_juridicas_`region'.dta"
-		erase					"$data_clean\personas_juridicas_`region'.dta"
+		append 					using "${data_clean}\personas_juridicas_`region'.dta"
+		erase					"${data_clean}\personas_juridicas_`region'.dta"
 	}
 	drop 					if comuna == ""
-	erase					"$data_clean\personas_juridicas_Tarapaca.dta"
+	erase					"${data_clean}\personas_juridicas_Tarapaca.dta"
 
 * Clean county names so then the data can be merged with other datasets
 	replace 				comuna = trim(comuna)
-	replace 				comuna=upper(comuna)
-	replace 				comuna=usubinstr(comuna, "ñ", "N", .)
-	replace 				comuna=usubinstr(comuna, "á", "A", .)
-	replace 				comuna=usubinstr(comuna, "é", "E", .)
-	replace 				comuna=usubinstr(comuna, "í", "I", .)
-	replace 				comuna=usubinstr(comuna, "ó", "O", .)
-	replace 				comuna=usubinstr(comuna, "ú", "U", .)
-	replace 				comuna=usubinstr(comuna, "Ñ", "N", .)
-	replace 				comuna=usubinstr(comuna, "Á", "A", .)
-	replace 				comuna=usubinstr(comuna, "É", "E", .)
-	replace 				comuna=usubinstr(comuna, "Í", "I", .)
-	replace 				comuna=usubinstr(comuna, "Ó", "O", .)
-	replace 				comuna=usubinstr(comuna, "Ú", "U", .)
+	replace 				comuna = upper(comuna)
+	replace 				comuna = usubinstr(comuna, "ñ", "N", .)
+	replace 				comuna = usubinstr(comuna, "á", "A", .)
+	replace 				comuna = usubinstr(comuna, "é", "E", .)
+	replace 				comuna = usubinstr(comuna, "í", "I", .)
+	replace 				comuna = usubinstr(comuna, "ó", "O", .)
+	replace 				comuna = usubinstr(comuna, "ú", "U", .)
+	replace 				comuna = usubinstr(comuna, "Ñ", "N", .)
+	replace 				comuna = usubinstr(comuna, "Á", "A", .)
+	replace 				comuna = usubinstr(comuna, "É", "E", .)
+	replace 				comuna = usubinstr(comuna, "Í", "I", .)
+	replace 				comuna = usubinstr(comuna, "Ó", "O", .)
+	replace 				comuna = usubinstr(comuna, "Ú", "U", .)
 	replace 				comuna = "CABO HORNOS" if comuna == "CABO DE HORNOS"
 	replace 				comuna = "LA CALERA" if comuna == "CALERA"
 	replace 				comuna = "LLAY-LLAY" if comuna == "LLAILLAY" | comuna == "LLAY LLAY"
@@ -673,24 +686,24 @@ Overview
 
 	collapse 				(sum) p_jur, by(comuna)
 	
-	save 					"$data_clean\personas_juridicas.dta", replace
+	save 					"${data_clean}\personas_juridicas.dta", replace
 
 /*******************************************************************************
-12. Turnout
+ 12. Turnout
 ********************************************************************************/
 
 * 2017
-	import 					delimited "$data_raw\turnout_2017.csv", clear
+	import 					delimited "${data_raw}\turnout_2017.csv", clear
 	gen 					turnout_2017=0
 	replace					turnout_2017=1 if sufragio=="sufragó"
 	collapse 				(mean) turnout_2017, by(comuna edad)
 	replace 				edad=edad+3
 	keep 					if edad<=80
 	rename 					edad cohort
-	save 					"$data_clean\turnout.dta", replace
+	save 					"${data_clean}\turnout.dta", replace
 
 * 2020
-	import 					delimited "$data_raw\turnout_2020.csv", clear
+	import 					delimited "${data_raw}\turnout_2020.csv", clear
 	gen 					turnout_2020=0
 	replace 				turnout_2020=1 if sufragio=="sufragÃ³"
 	collapse 				(mean) turnout_2020, by(comuna edad)
@@ -716,7 +729,7 @@ Overview
 	replace 				comuna = "Cabo De Hornos" if comuna == "Cabo De Hornos(Ex-Navarino)"
 	replace 				comuna = "Aisen" if comuna == "Aysen"
 
-	merge 					1:1 comuna cohort using "$data_clean\turnout.dta", nogen
+	merge 					1:1 comuna cohort using "${data_clean}\turnout.dta", nogen
 
 * Clean county names so then the data can be merged with other datasets
 	replace 				comuna = upper(comuna)
@@ -742,27 +755,27 @@ Overview
 	label 					var turnout_2017 "2017 turnout rate"
 	label 					var turnout_2020 "2020 turnout rate"
 
-	save 					"$data_clean\turnout.dta", replace
+	save 					"${data_clean}\turnout.dta", replace
 
 /*******************************************************************************
-13. Survey data from Latinobarometro (1995-2018)
+ 13. Survey data from Latinobarometro (1995-2018)
 ********************************************************************************/
 
 * 1997
-	use 					"$data_raw\latinobarometro\Latinobarometro_1997.dta", clear
+	use 					"${data_raw}\latinobarometro\Latinobarometro_1997.dta", clear
 	keep 					if idenpa==152
 	keep 					numinves ciudad s1 sp21 sp31 sp32 sp63a sp63b ///
 								sp63c sp63d sp63e sp63f sp63g s2 wt tamciud sp37 s5 s16
 	foreach 				var of varlist _all {
-			if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
-				decode				`var', gen(`var'_string)
-				drop 				`var'
-			}
+		if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
+			decode				`var', gen(`var'_string)
+			drop 				`var'
+		}
 	}
-	save 					"$data_clean\Latinobarometro_1997_final.dta", replace
+	save 					"${data_clean}\Latinobarometro_1997_final.dta", replace
 
 * 1998
-	use 					"$data_raw\latinobarometro\Latinobarometro_1998.dta", clear
+	use 					"${data_raw}\latinobarometro\Latinobarometro_1998.dta", clear
 	keep 					if idenpa==152
 	keep 					numinves s1 ciudad sp20 sp28 sp29 sp38a sp38b ///
 								sp38c sp38d sp38e sp38f sp38g s2 pondera tamciud ///
@@ -784,12 +797,12 @@ Overview
 		if						"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
 			decode					`var', gen(`var'_string)
 			drop 					`var'
-			}
+		}
 	}
-	save 				"$data_clean\Latinobarometro_1998_final.dta", replace
+	save 				"${data_clean}\Latinobarometro_1998_final.dta", replace
 
 * 2000
-	use 				"$data_raw\latinobarometro\Latinobarometro_2000.dta", clear
+	use 				"${data_raw}\latinobarometro\Latinobarometro_2000.dta", clear
 	keep 				if idenpa==152
 	keep 				numinves S1 ciudad P17ST P29ST P30ST P35ST_A P35ST_B ///
 							P35ST_C P35ST_D P35ST_E P35ST_F P35ST_G S2 wt tamciud ///
@@ -812,12 +825,12 @@ Overview
 		if					"`var'" != "wt" & "`var'" != "s1" & "`var'" != "s2" & "`var'" != "numinves" {
 			decode				`var', gen(`var'_string)
 			drop 				`var'
-			}
+		}
 	}
-	save 				"$data_clean\Latinobarometro_2000_final.dta", replace
+	save 				"${data_clean}\Latinobarometro_2000_final.dta", replace
 
 * 2001
-	use 				"$data_raw\latinobarometro\Latinobarometro_2001.dta", clear
+	use 				"${data_raw}\latinobarometro\Latinobarometro_2001.dta", clear
 	keep 				if idenpa==152
 	keep 				numinves s1 ciudad p42st p46st p45st p61sta p61stb p61stc ///
 							p61std p61ste p61stf p61stg p63stc s2 wt tamciud s4 s16a
@@ -839,10 +852,10 @@ Overview
 			drop 				`var'
 		}
 	}
-	save 			"$data_clean\Latinobarometro_2001_final.dta", replace
+	save 			"${data_clean}\Latinobarometro_2001_final.dta", replace
 
 * 2002
-	use 				"$data_raw\latinobarometro\Latinobarometro_2002.dta", clear
+	use 				"${data_raw}\latinobarometro\Latinobarometro_2002.dta", clear
 	keep 				if idenpa==152
 	keep 				numinves s1 ciudad p29st p32st p33st p34sta p36stb p34stc ///
 							p36ste p36std p34stf p34std s2 wt tamciud s4 s20
@@ -863,10 +876,10 @@ Overview
 			drop 				`var'
 		}
 	}
-	save 				"$data_clean\Latinobarometro_2002_final.dta", replace
+	save 				"${data_clean}\Latinobarometro_2002_final.dta", replace
 
 * 2003
-	use 				"$data_raw\latinobarometro\Latinobarometro_2003.dta", clear
+	use 				"${data_raw}\latinobarometro\Latinobarometro_2003.dta", clear
 	keep 				if idenpa==152
 	keep 				numinves s1 ciudad p20st p14st p15st p21sta p21stg p21ste ///
 							p23stc p21stb p21stf p21std p23stg s2 wt tamciud ///
@@ -890,10 +903,10 @@ Overview
 			drop 				`var'
 		}
 	}
-	save 				"$data_clean\Latinobarometro_2003_final.dta", replace
+	save 				"${data_clean}\Latinobarometro_2003_final.dta", replace
 
 * 2004
-	use 				"$data_raw\Latinobarometro\Latinobarometro_2004.dta", clear
+	use 				"${data_raw}\Latinobarometro\Latinobarometro_2004.dta", clear
 	keep 				if idenpa==152
 	keep 				numinves s1 Ciudad p43st p13st p14st p32stc p32stg p34stb ///
 							p34stc p32stb p34stf p34std p34sth p32std s2 wt tamciud ///
@@ -920,10 +933,10 @@ Overview
 			drop 				`var'
 		}
 	}
-	save 				"$data_clean\Latinobarometro_2004_final.dta", replace
+	save 				"${data_clean}\Latinobarometro_2004_final.dta", replace
 
 * 2005
-	use 				"$data_raw\latinobarometro\Latinobarometro_2005.dta", clear
+	use 				"${data_raw}\latinobarometro\Latinobarometro_2005.dta", clear
 	keep 				if idenpa==152
 	keep 				numinves ciudad p14st p16st p18st p42sta p42stb p42std ///
 							p47stf p42stf p45sta p47stb p45stc s7 wt tamciud p50st ///
@@ -949,10 +962,10 @@ Overview
 			drop 				`var'
 		}
 	}
-	save 				"$data_clean\Latinobarometro_2005_final.dta", replace
+	save 				"${data_clean}\Latinobarometro_2005_final.dta", replace
 
 * 2006 
-	use 				"$data_raw\latinobarometro\Latinobarometro_2006.dta", clear
+	use 				"${data_raw}\latinobarometro\Latinobarometro_2006.dta", clear
 	keep 				if idenpa==152
 	keep 				numinves sexo ciudad p45st p17st p21st p32st_d p32st_e ///
 							p24st_a p24st_b p24st_d p24st_f p24st_c p32st_a s7 ///
@@ -978,10 +991,10 @@ Overview
 			drop 				`var'
 		}
 	}
-	save 				"$data_clean\Latinobarometro_2006_final.dta", replace
+	save 				"${data_clean}\Latinobarometro_2006_final.dta", replace
 
 * 2007
-	use 				"$data_raw\latinobarometro\Latinobarometro_2007.dta", clear
+	use 				"${data_raw}\latinobarometro\Latinobarometro_2007.dta", clear
 	keep 				if idenpa==152
 	keep 				numinves s10 ciudad p23st p9st p12st p27st_c p27st_d p24st_d ///
 							p24st_e p27st_f p24st_f p27st_e p24st_a edad wt tamciud ///
@@ -1007,10 +1020,10 @@ Overview
 			drop 				`var'
 		}
 	}
-	save 				"$data_clean\Latinobarometro_2007_final.dta", replace
+	save 				"${data_clean}\Latinobarometro_2007_final.dta", replace
 
 * 2008
-	use 				"$data_raw\latinobarometro\Latinobarometro_2008.dta", clear
+	use 				"${data_raw}\latinobarometro\Latinobarometro_2008.dta", clear
 	keep 				if idenpa==152
 	keep 				numinves s8 ciudad p21wvsst p13st p22st_a p28st_g p28st_d ///
 							p28st_b p31st_c p28st_a p28st_c p28st_f p31s_ta s9 ///
@@ -1036,10 +1049,10 @@ Overview
 			drop 				`var'
 		}
 	}
-	save 				"$data_clean\Latinobarometro_2008_final.dta", replace
+	save 				"${data_clean}\Latinobarometro_2008_final.dta", replace
 
 * 2009
-	use 				"$data_raw\latinobarometro\Latinobarometro_2009.dta", clear
+	use 				"${data_raw}\latinobarometro\Latinobarometro_2009.dta", clear
 	keep 				if idenpa==152
 	keep 				numinves ciudad s5 p58st p10st p12st_a p26st_g p26st_d ///
 							p26st_b p24st_c p26st_a p26st_c p26st_f p24st_a s6 wt ///
@@ -1066,10 +1079,10 @@ Overview
 			drop 				`var'
 		}
 	}
-	save 				"$data_clean\Latinobarometro_2009_final.dta", replace
+	save 				"${data_clean}\Latinobarometro_2009_final.dta", replace
 
 * 2010
-	use 				"$data_raw\latinobarometro\Latinobarometro_2010.dta", clear
+	use 				"${data_raw}\latinobarometro\Latinobarometro_2010.dta", clear
 	keep 				if idenpa==152
 	keep 				numinves S7 ciudad P55ST P10ST P11ST_A P20ST_G P20ST_D P20ST_B ///
 							P18ST_C P20ST_A P20ST_C P20ST_F P20ST_I P18ST_A S8 wt ///
@@ -1095,10 +1108,10 @@ Overview
 			drop 				`var'
 		}
 	}
-	save 				"$data_clean\Latinobarometro_2010_final.dta", replace
+	save 				"${data_clean}\Latinobarometro_2010_final.dta", replace
 
 * 2011
-	use 				"$data_raw\latinobarometro\Latinobarometro_2011.dta", clear
+	use 				"${data_raw}\latinobarometro\Latinobarometro_2011.dta", clear
 	keep 				if idenpa==152
 	keep 				numinves ciudad S16 P25ST P22ST_G P22ST_D P22ST_B P20ST_C ///
 							P22ST_A P22ST_C reedad wt tamciud  S15 S34
@@ -1120,10 +1133,10 @@ Overview
 			drop 				`var'
 		}
 	}
-	save 				"$data_clean\Latinobarometro_2011_final.dta", replace
+	save 				"${data_clean}\Latinobarometro_2011_final.dta", replace
 
 * 2015
-	use 				"$data_raw\latinobarometro\Latinobarometro_2015.dta", clear
+	use 				"${data_raw}\latinobarometro\Latinobarometro_2015.dta", clear
 	keep 				if idenpa==152
 	keep 				numinves S12 ciudad P15STGBS P11STGBS P12TG_A P16ST_E ///
 							P16TGB_A P16ST_H P16TGB_B P16ST_F P19ST_C P19ST_F ///
@@ -1149,10 +1162,10 @@ Overview
 			drop 				`var'
 		}
 	}
-	save 				"$data_clean\Latinobarometro_2015_final.dta", replace
+	save 				"${data_clean}\Latinobarometro_2015_final.dta", replace
 
 * 2016
-	use 				"$data_raw\latinobarometro\Latinobarometro_2016.dta", clear
+	use 				"${data_raw}\latinobarometro\Latinobarometro_2016.dta", clear
 	keep 				if idenpa==152
 	keep 				numinves sexo ciudad P12STGBS P8STGBS P9STGBSA P13STC ///
 							P13STGBSA P13STF P13STGBSB P13STD P13STG edad wt ///
@@ -1176,10 +1189,10 @@ Overview
 			drop 				`var'
 		}
 	}
-	save 				"$data_clean\Latinobarometro_2016_final.dta", replace
+	save 				"${data_clean}\Latinobarometro_2016_final.dta", replace
 
 * 2017
-	use 				"$data_raw\latinobarometro\Latinobarometro_2017.dta", clear
+	use 				"${data_raw}\latinobarometro\Latinobarometro_2017.dta", clear
 	keep 				if idenpa==152
 	keep 				numinves sexo ciudad P13STGBS P8STGBS P9STGBSC_A P14ST_C ///
 							P14STGBS_A P14ST_F P14STGBS_B P14ST_D P14ST_G P14ST_E ///
@@ -1204,10 +1217,10 @@ Overview
 			drop 				`var'
 		}
 	}
-	save 				"$data_clean\Latinobarometro_2017_final.dta", replace
+	save 				"${data_clean}\Latinobarometro_2017_final.dta", replace
 
 * 2018
-	use 				"$data_raw\latinobarometro\Latinobarometro_2018.dta", clear
+	use 				"${data_raw}\latinobarometro\Latinobarometro_2018.dta", clear
 	keep 				if IDENPA==152
 	keep 				NUMINVES SEXO CIUDAD P11STGBS P12STGBS P13STGBS* P15STGBSC* ///
 							P15STGBSC* P15STGBSC*  P15STGBSC* P15STGBSC* P15STGBSC* ///
@@ -1244,151 +1257,448 @@ Overview
 			drop 				`var'
 		}
 	}
-	save 				"$data_clean\Latinobarometro_2018_final.dta", replace
+	save 				"${data_clean}\Latinobarometro_2018_final.dta", replace
 
 * COMBINE DATA FOR ALL YEARS
-	use 				"$data_clean\Latinobarometro_1997_final.dta", clear
+	use 				"${data_clean}\Latinobarometro_1997_final.dta", clear
 	foreach 			y in 1998 2000 2001	2002 2003 2004 2005 2006 2007 2008 ///
 							2009 2010 2011 2015 2016 2017 2018 {
-		append 				using "$data_clean\Latinobarometro_`y'_final.dta"
-		erase				"$data_clean\Latinobarometro_`y'_final.dta"
+		append 				using "${data_clean}\Latinobarometro_`y'_final.dta"
+		erase				"${data_clean}\Latinobarometro_`y'_final.dta"
 	}
-	save 				"$data_clean\Latinobarometro_final.dta", replace
-	erase				"$data_clean\Latinobarometro_1997_final.dta"
+	save 				"${data_clean}\Latinobarometro_final.dta", replace
+	erase				"${data_clean}\Latinobarometro_1997_final.dta"
 
 *Create a dummy version of each variable 
-	gen 				s5=.
-	replace	 			s5=1 if s5_string=="Casado/ Conviviente" | s5_string=="Married/Living with partner"
-	replace 			s5=2 if s5_string=="Separado/Divorciado/Viudo" | s5_string=="Separated/Divorced/Widow/er"
-	replace 			s5=3 if s5_string=="Single" | s5_string=="Soltero"
-	replace 			s5=4 if s5==.
+	gen 				s5 = .
+	replace	 			s5 = 1 if s5_string == "Casado/ Conviviente" | ///
+							s5_string == "Married/Living with partner"
+	replace 			s5 = 2 if s5_string == "Separado/Divorciado/Viudo" | ///
+							s5_string == "Separated/Divorced/Widow/er"
+	replace 			s5 = 3 if s5_string == "Single" | s5_string == "Soltero"
+	replace 			s5 = 4 if s5 == .
 
-	gen 				s16=.
-	replace 			s16=1 if s16_string=="Very bad" | s16_string=="Muy malo"
-	replace 			s16=2 if s16_string=="Bad" | s16_string=="Malo"
-	replace 			s16=3 if s16_string=="Average" | s16_string=="Regular" | s16_string=="Not bad"
-	replace 			s16=4 if s16_string=="Good" | s16_string=="Bueno"
-	replace 			s16=5 if s16_string=="Very good" | s16_string=="Muy  bueno"
+	gen 				s16 = .
+	replace 			s16 = 1 if s16_string == "Very bad" | s16_string == "Muy malo"
+	replace 			s16 = 2 if s16_string == "Bad" | s16_string == "Malo"
+	replace 			s16 = 3 if s16_string == "Average" | s16_string == "Regular" | ///
+							s16_string == "Not bad"
+	replace 			s16 = 4 if s16_string == "Good" | s16_string == "Bueno"
+	replace 			s16 = 5 if s16_string == "Very good" | s16_string == "Muy  bueno"
 
-	gen 				sp21=.
-	replace 			sp21=1 if sp21_string=="Most people can be trusted" | sp21_string=="You can trust most people"
-	replace 			sp21=0 if sp21_string=="One can never be too careful when dealing with others" | sp21_string=="You can never be too careful when dealing with others"
+	gen 				sp21 = .
+	replace 			sp21 = 1 if sp21_string == "Most people can be trusted" | ///
+							sp21_string == "You can trust most people"
+	replace 			sp21 = 0 if sp21_string == "One can never be too careful when dealing with others" | ///
+							sp21_string == "You can never be too careful when dealing with others"
 
-	gen 				sp31=.
-	replace 			sp31=1 if sp31_string=="Democracy is preferable to any other kind of government"
-	replace 			sp31=0 if sp31_string=="For people like me, it does not matter whether we have a dem" | sp31_string=="For people like me, it doesn’t matter whether we have a demo" | sp31_string=="Under some circumstances, an authoritarian government can be"
+	gen 				sp31 = .
+	replace 			sp31 = 1 if sp31_string == "Democracy is preferable to any other kind of government"
+	replace 			sp31 = 0 if sp31_string == "For people like me, it does not matter whether we have a dem" | ///
+							sp31_string=="For people like me, it doesn’t matter whether we have a demo" | ///
+							sp31_string=="Under some circumstances, an authoritarian government can be"
 
-	gen 				sp32=.
-	replace 			sp32=1 if sp32_string=="Mas bien satisfecho" | sp32_string=="Muy satisfecho" | sp32_string=="Quite satisfied" | sp32_string=="Rather satisfied" | sp32_string=="Very satisfied"
-	replace 			sp32=0 if sp32_string=="Nada satisfecho" | sp32_string=="Not at all satisfied" | sp32_string=="Not very satisfied"
+	gen 				sp32 = .
+	replace 			sp32 = 1 if sp32_string == "Mas bien satisfecho" | ///
+							sp32_string == "Muy satisfecho" | ///
+							sp32_string == "Quite satisfied" | ///
+							sp32_string == "Rather satisfied" | ///
+							sp32_string == "Very satisfied"
+	replace 			sp32 = 0 if sp32_string == "Nada satisfecho" | ///
+							sp32_string == "Not at all satisfied" | ///
+							sp32_string == "Not very satisfied"
 
-	gen 				sp63a=.
-	replace 			sp63a=1 if sp63a_string=="A lot of confidence" | sp63a_string=="Lot" | sp63a_string=="Mucha" | sp63a_string=="Algo" | sp63a_string=="Some" | sp63a_string=="Some confidence"
-	replace 			sp63a=0 if sp63a_string=="Little" | sp63a_string=="Little confidence" | sp63a_string=="Ninguna" | sp63a_string=="No confidence at all" | sp63a_string=="Nothing" | sp63a_string=="Poca" 
+	gen 				sp63a = .
+	replace 			sp63a = 1 if sp63a_string == "A lot of confidence" | ///
+							sp63a_string == "Lot" | ///
+							sp63a_string == "Mucha" | ///
+							sp63a_string == "Algo" | ///
+							sp63a_string == "Some" | ///
+							sp63a_string == "Some confidence"
+	replace 			sp63a = 0 if sp63a_string == "Little" | ///
+							sp63a_string=="Little confidence" | ///
+							sp63a_string=="Ninguna" | ///
+							sp63a_string=="No confidence at all" | ///
+							sp63a_string=="Nothing" | ///
+							sp63a_string=="Poca" 
 
-	gen 				sp63b=.
-	replace 			sp63b=1 if sp63b_string=="A lot of confidence" | sp63b_string=="Lot" | sp63b_string=="Mucha" | sp63b_string=="Algo" | sp63b_string=="Some" | sp63b_string=="Some confidence"
-	replace 			sp63b=0 if sp63b_string=="Little" | sp63b_string=="Little confidence" | sp63b_string=="Ninguna" | sp63b_string=="No confidence at all" | sp63b_string=="Nothing" | sp63b_string=="Poca" 
+	gen 				sp63b = .
+	replace 			sp63b = 1 if sp63b_string == "A lot of confidence" | ///
+							sp63b_string == "Lot" | ///
+							sp63b_string == "Mucha" | ///
+							sp63b_string == "Algo" | ///
+							sp63b_string == "Some" | ///
+							sp63b_string == "Some confidence"
+	replace 			sp63b = 0 if sp63b_string == "Little" | ///
+							sp63b_string == "Little confidence" | ///
+							sp63b_string == "Ninguna" | ///
+							sp63b_string == "No confidence at all" | ///
+							sp63b_string == "Nothing" | ///
+							sp63b_string == "Poca" 
 
-	gen 				sp63c=.
-	replace 			sp63c=1 if sp63c_string=="A lot of confidence" | sp63c_string=="Lot" | sp63c_string=="Mucha" | sp63c_string=="Algo" | sp63c_string=="Some" | sp63c_string=="Some confidence"
-	replace 			sp63c=0 if sp63c_string=="A little" | sp63c_string=="Little" | sp63c_string=="Little confidence" | sp63c_string=="Ninguna" | sp63c_string=="No confidence at all" | sp63c_string=="Nothing" | sp63c_string=="Poca" 
+	gen 				sp63c = .
+	replace 			sp63c = 1 if sp63c_string == "A lot of confidence" | ///
+							sp63c_string == "Lot" | ///
+							sp63c_string == "Mucha" | ///
+							sp63c_string == "Algo" | ///
+							sp63c_string == "Some" | ///
+							sp63c_string == "Some confidence"
+	replace 			sp63c = 0 if sp63c_string == "A little" | ///
+							sp63c_string == "Little" | ///
+							sp63c_string == "Little confidence" | ///
+							sp63c_string == "Ninguna" | ///
+							sp63c_string == "No confidence at all" | ///
+							sp63c_string == "Nothing" | ///
+							sp63c_string == "Poca" 
 
-	gen 				sp63d=.
-	replace 			sp63d=1 if sp63d_string=="A lot of confidence" | sp63d_string=="Lot" | sp63d_string=="Mucha" | sp63d_string=="Algo" | sp63d_string=="Some" | sp63d_string=="Some confidence"
-	replace 			sp63d=0 if sp63d_string=="A little" | sp63d_string=="Little" | sp63d_string=="Little confidence" | sp63d_string=="Ninguna" | sp63d_string=="No confidence at all" | sp63d_string=="Nothing" | sp63d_string=="Poca"  | sp63d_string=="No trust"
+	gen 				sp63d = .
+	replace 			sp63d = 1 if sp63d_string == "A lot of confidence" | ///
+							sp63d_string == "Lot" | ///
+							sp63d_string == "Mucha" | ///
+							sp63d_string == "Algo" | ///
+							sp63d_string == "Some" | ///
+							sp63d_string == "Some confidence"
+	replace 			sp63d = 0 if sp63d_string == "A little" | ///
+							sp63d_string == "Little" | ///
+							sp63d_string == "Little confidence" | ///
+							sp63d_string == "Ninguna" | ///
+							sp63d_string == "No confidence at all" | ///
+							sp63d_string == "Nothing" | ///
+							sp63d_string == "Poca"  | ///
+							sp63d_string == "No trust"
 
-	gen 				sp63e=.
-	replace 			sp63e=1 if sp63e_string=="A lot of confidence" | sp63e_string=="Lot" | sp63e_string=="Mucha" | sp63e_string=="Algo" | sp63e_string=="Some" | sp63e_string=="Some confidence"
-	replace 			sp63e=0 if sp63e_string=="A little" | sp63e_string=="Little" | sp63e_string=="Little confidence" | sp63e_string=="Ninguna" | sp63e_string=="No confidence at all" | sp63e_string=="Nothing" | sp63e_string=="Poca"  | sp63e_string=="No trust"
+	gen 				sp63e = .
+	replace 			sp63e = 1 if sp63e_string == "A lot of confidence" | ///
+							sp63e_string == "Lot" | ///
+							sp63e_string == "Mucha" | ///
+							sp63e_string == "Algo" | ///
+							sp63e_string == "Some" | ///
+							sp63e_string == "Some confidence"
+	replace 			sp63e = 0 if sp63e_string == "A little" | ///
+							sp63e_string == "Little" | ///
+							sp63e_string == "Little confidence" | ///
+							sp63e_string == "Ninguna" | ///
+							sp63e_string == "No confidence at all" | ///
+							sp63e_string == "Nothing" | ///
+							sp63e_string == "Poca"  | ///
+							sp63e_string == "No trust"
 
-	gen 				sp63f=.
-	replace 			sp63f=1 if sp63f_string=="A lot of confidence" | sp63f_string=="Lot" | sp63f_string=="Mucha" | sp63f_string=="Algo" | sp63f_string=="Some" | sp63f_string=="Some confidence"
-	replace 			sp63f=0 if sp63f_string=="A little" | sp63f_string=="Little" | sp63f_string=="Little confidence" | sp63f_string=="Ninguna" | sp63f_string=="No confidence at all" | sp63f_string=="Nothing" | sp63f_string=="Poca"  | sp63f_string=="No trust"
+	gen 				sp63f = .
+	replace 			sp63f = 1 if sp63f_string == "A lot of confidence" | ///
+							sp63f_string == "Lot" | ///
+							sp63f_string == "Mucha" | ///
+							sp63f_string == "Algo" | ///
+							sp63f_string == "Some" | ///
+							sp63f_string == "Some confidence"
+	replace 			sp63f = 0 if sp63f_string == "A little" | ///
+							sp63f_string == "Little" | ///
+							sp63f_string == "Little confidence" | ///
+							sp63f_string == "Ninguna" | ///
+							sp63f_string == "No confidence at all" | ///
+							sp63f_string == "Nothing" | ///
+							sp63f_string == "Poca"  | ///
+							sp63f_string == "No trust"
 
-	gen 				sp63g=.
-	replace 			sp63g=1 if sp63g_string=="A lot of confidence" | sp63g_string=="Lot" | sp63g_string=="Mucha" | sp63g_string=="Algo" | sp63g_string=="Some" | sp63g_string=="Some confidence"
-	replace 			sp63g=0 if sp63g_string=="A little" | sp63g_string=="Little" | sp63g_string=="Little confidence" | sp63g_string=="Ninguna" | sp63g_string=="No confidence at all" | sp63g_string=="Nothing" | sp63g_string=="Poca"  | sp63g_string=="No trust"
+	gen 				sp63g = .
+	replace 			sp63g = 1 if sp63g_string == "A lot of confidence" | ///
+							sp63g_string == "Lot" | ///
+							sp63g_string == "Mucha" | ///
+							sp63g_string == "Algo" | ///
+							sp63g_string == "Some" | ///
+							sp63g_string == "Some confidence"
+	replace 			sp63g = 0 if sp63g_string == "A little" | ///
+							sp63g_string == "Little" | ///
+							sp63g_string == "Little confidence" | ///
+							sp63g_string == "Ninguna" | ///
+							sp63g_string == "No confidence at all" | ///
+							sp63g_string == "Nothing" | ///
+							sp63g_string == "Poca"  | ///
+							sp63g_string == "No trust"
 
-	gen 				p63stc=.
-	replace 			p63stc=1 if p63stc_string=="A lot of confidence" | p63stc_string=="Lot" | p63stc_string=="A lot" | p63stc_string=="Mucha" | p63stc_string=="Algo" | p63stc_string=="Some" | p63stc_string=="Some confidence"
-	replace 			p63stc=0 if p63stc_string=="A little" | p63stc_string=="Little" | p63stc_string=="Little confidence" | p63stc_string=="Ninguna" | p63stc_string=="No confidence at all" | p63stc_string=="Nothing" | p63stc_string=="Poca"  | p63stc_string=="No trust" | p63stc_string=="None"
+	gen 				p63stc = .
+	replace 			p63stc = 1 if p63stc_string == "A lot of confidence" | ///
+							p63stc_string=="Lot" | ///
+							p63stc_string=="A lot" | ///
+							p63stc_string=="Mucha" | ///
+							p63stc_string=="Algo" | ///
+							p63stc_string=="Some" | ///
+							p63stc_string=="Some confidence"
+	replace 			p63stc = 0 if p63stc_string == "A little" | ///
+							p63stc_string=="Little" | ///
+							p63stc_string=="Little confidence" | ///
+							p63stc_string=="Ninguna" | ///
+							p63stc_string=="No confidence at all" | ///
+							p63stc_string=="Nothing" | ///
+							p63stc_string=="Poca"  | ///
+							p63stc_string=="No trust" | ///
+							p63stc_string=="None"
 
-	gen 				p34std=.
-	replace 			p34std=1 if p34std_string=="A lot of confidence" | p34std_string=="Lot" | p34std_string=="A lot" | p34std_string=="Mucha" | p34std_string=="Algo" | p34std_string=="Some" | p34std_string=="Some confidence"
-	replace 			p34std=0 if p34std_string=="A little" | p34std_string=="Little" | p34std_string=="Little confidence" | p34std_string=="Ninguna" | p34std_string=="No confidence at all" | p34std_string=="Nothing" | p34std_string=="Poca"  | p34std_string=="No trust" | p34std_string=="None"
+	gen 				p34std = .
+	replace 			p34std = 1 if p34std_string == "A lot of confidence" | ///
+							p34std_string=="Lot" | ///
+							p34std_string=="A lot" | ///
+							p34std_string=="Mucha" | ///
+							p34std_string=="Algo" | ///
+							p34std_string=="Some" | ///
+							p34std_string=="Some confidence"
+	replace 			p34std = 0 if p34std_string == "A little" | ///
+							p34std_string=="Little" | ///
+							p34std_string=="Little confidence" | ///
+							p34std_string=="Ninguna" | ///
+							p34std_string=="No confidence at all" | ///
+							p34std_string=="Nothing" | ///
+							p34std_string=="Poca"  | ///
+							p34std_string=="No trust" | ///
+							p34std_string=="None"
 
-	gen 				P20ST_I=.
-	replace 			P20ST_I=1 if P20ST_I_string=="A lot of confidence" | P20ST_I_string=="Lot" | P20ST_I_string=="A lot" | P20ST_I_string=="Mucha" | P20ST_I_string=="Algo" | P20ST_I_string=="Some" | P20ST_I_string=="Some confidence"
-	replace 			P20ST_I=0 if P20ST_I_string=="A little" | P20ST_I_string=="Little" | P20ST_I_string=="Little confidence" | P20ST_I_string=="Ninguna" | P20ST_I_string=="No confidence at all" | P20ST_I_string=="Nothing" | P20ST_I_string=="Poca"  | P20ST_I_string=="No trust" | P20ST_I_string=="None" | P20ST_I_string=="No confidence"
+	gen 				P20ST_I = .
+	replace 			P20ST_I = 1 if P20ST_I_string == "A lot of confidence" | ///
+							P20ST_I_string == "Lot" | ///
+							P20ST_I_string == "A lot" | ///
+							P20ST_I_string == "Mucha" | ///
+							P20ST_I_string == "Algo" | ///
+							P20ST_I_string == "Some" | ///
+							P20ST_I_string == "Some confidence"
+	replace 			P20ST_I = 0 if P20ST_I_string == "A little" | ///
+							P20ST_I_string == "Little" | ///
+							P20ST_I_string == "Little confidence" | ///
+							P20ST_I_string == "Ninguna" | ///
+							P20ST_I_string == "No confidence at all" | ///
+							P20ST_I_string == "Nothing" | ///
+							P20ST_I_string == "Poca"  | ///
+							P20ST_I_string == "No trust" | ///
+							P20ST_I_string == "None" | ///
+							P20ST_I_string == "No confidence"
 
-	gen 				P16ST_G=.
-	replace 			P16ST_G=1 if P16ST_G_string=="A lot of confidence" | P16ST_G_string=="Lot" | P16ST_G_string=="A lot" | P16ST_G_string=="Mucha" | P16ST_G_string=="Algo" | P16ST_G_string=="Some" | P16ST_G_string=="Some confidence"
-	replace 			P16ST_G=0 if P16ST_G_string=="A little" | P16ST_G_string=="Little" | P16ST_G_string=="Little confidence" | P16ST_G_string=="Ninguna" | P16ST_G_string=="No confidence at all" | P16ST_G_string=="Nothing" | P16ST_G_string=="Poca"  | P16ST_G_string=="No trust" | P16ST_G_string=="None" | P16ST_G_string=="No confidence"
+	gen 				P16ST_G = .
+	replace 			P16ST_G = 1 if P16ST_G_string == "A lot of confidence" | ///
+							P16ST_G_string=="Lot" | ///
+							P16ST_G_string=="A lot" | ///
+							P16ST_G_string=="Mucha" | ///
+							P16ST_G_string=="Algo" | ///
+							P16ST_G_string=="Some" | ///
+							P16ST_G_string=="Some confidence"
+	replace 			P16ST_G = 0 if P16ST_G_string == "A little" | ///
+							P16ST_G_string=="Little" | ///
+							P16ST_G_string=="Little confidence" | ///
+							P16ST_G_string=="Ninguna" | ///
+							P16ST_G_string=="No confidence at all" | ///
+							P16ST_G_string=="Nothing" | ///
+							P16ST_G_string=="Poca" | ///
+							P16ST_G_string=="No trust" | ///
+							P16ST_G_string=="None" | ///
+							P16ST_G_string=="No confidence"
 
-	gen 				sp37=.
-	replace 			sp37=1 if sp37_string=="The way you vote can change the way things will be in the fu"
-	replace 			sp37=0 if sp37_string=="No matter how you vote, things will not improve in the futur"
+	gen 				sp37 = .
+	replace 			sp37 = 1 if sp37_string == "The way you vote can change the way things will be in the fu"
+	replace 			sp37 = 0 if sp37_string == "No matter how you vote, things will not improve in the futur"
 
-	gen 				sp21_v2=.
-	replace 			sp21_v2=1 if sp21_string=="One can never be too careful when dealing with others" | sp21_string=="You can never be too careful when dealing with others"
-	replace 			sp21_v2=0 if sp21_string=="Most people can be trusted" | sp21_string=="You can trust most people"
+	gen 				sp21_v2 = .
+	replace 			sp21_v2 = 1 if sp21_string == "One can never be too careful when dealing with others" | ///
+							sp21_string == "You can never be too careful when dealing with others"
+	replace 			sp21_v2 = 0 if sp21_string == "Most people can be trusted" | ///
+							sp21_string == "You can trust most people"
 
-	gen 				sp31_v2=.
-	replace 			sp31_v2=1 if sp31_string=="For people like me, it does not matter whether we have a dem" | sp31_string=="For people like me, it doesn’t matter whether we have a demo" 
-	replace 			sp31_v2=0 if sp31_string=="Democracy is preferable to any other kind of government" | sp31_string=="Under some circumstances, an authoritarian government can be"
+	gen 				sp31_v2 = .
+	replace 			sp31_v2 = 1 if sp31_string == "For people like me, it does not matter whether we have a dem" | ///
+							sp31_string == "For people like me, it doesn’t matter whether we have a demo" 
+	replace 			sp31_v2 = 0 if sp31_string == "Democracy is preferable to any other kind of government" | ///
+							sp31_string == "Under some circumstances, an authoritarian government can be"
 
-	gen 				sp32_v2=.
-	replace 			sp32_v2=1 if sp32_string=="Nada satisfecho" | sp32_string=="Not at all satisfied" 
-	replace 			sp32_v2=0 if sp32_string=="Mas bien satisfecho" | sp32_string=="Muy satisfecho" | sp32_string=="Quite satisfied" | sp32_string=="Rather satisfied" | sp32_string=="Very satisfied" | sp32_string=="Not very satisfied"
+	gen 				sp32_v2 = .
+	replace 			sp32_v2 = 1 if sp32_string == "Nada satisfecho" | ///
+							sp32_string == "Not at all satisfied" 
+	replace 			sp32_v2 = 0 if sp32_string == "Mas bien satisfecho" | ///
+							sp32_string == "Muy satisfecho" | ///
+							sp32_string == "Quite satisfied" | ///
+							sp32_string == "Rather satisfied" | ///
+							sp32_string == "Very satisfied" | ///
+							sp32_string == "Not very satisfied"
 
-	gen 				sp63a_v2=.
-	replace 			sp63a_v2=1 if sp63a_string=="Ninguna" | sp63a_string=="No confidence at all" | sp63a_string=="Nothing" 
-	replace 			sp63a_v2=0 if sp63a_string=="A lot of confidence" | sp63a_string=="Lot" | sp63a_string=="Mucha" | sp63a_string=="Algo" | sp63a_string=="Some" | sp63a_string=="Some confidence" | sp63a_string=="Little" | sp63a_string=="Little confidence" | sp63a_string=="Poca" 
+	gen 				sp63a_v2 = .
+	replace 			sp63a_v2 = 1 if sp63a_string == "Ninguna" | ///
+							sp63a_string == "No confidence at all" | ///
+							sp63a_string == "Nothing" 
+	replace 			sp63a_v2 = 0 if sp63a_string == "A lot of confidence" | ///
+							sp63a_string == "Lot" | ///
+							sp63a_string == "Mucha" | ///
+							sp63a_string == "Algo" | ///
+							sp63a_string == "Some" | ///
+							sp63a_string == "Some confidence" | ///
+							sp63a_string == "Little" | ///
+							sp63a_string == "Little confidence" | ///
+							sp63a_string == "Poca" 
 
-	gen 				sp63b_v2=.
-	replace 			sp63b_v2=1 if sp63b_string=="Ninguna" | sp63b_string=="No confidence at all" | sp63b_string=="Nothing" 
-	replace 			sp63b_v2=0 if sp63b_string=="A lot of confidence" | sp63b_string=="Lot" | sp63b_string=="Mucha" | sp63b_string=="Algo" | sp63b_string=="Some" | sp63b_string=="Some confidence" | sp63b_string=="Little" | sp63b_string=="Little confidence" | sp63b_string=="Poca" 
+	gen 				sp63b_v2 = .
+	replace 			sp63b_v2 = 1 if sp63b_string == "Ninguna" | ///
+							sp63b_string=="No confidence at all" | ///
+							sp63b_string=="Nothing" 
+	replace 			sp63b_v2 = 0 if sp63b_string == "A lot of confidence" | ///
+							sp63b_string=="Lot" | ///
+							sp63b_string=="Mucha" | ///
+							sp63b_string=="Algo" | ///
+							sp63b_string=="Some" | ///
+							sp63b_string=="Some confidence" | ///
+							sp63b_string=="Little" | ///
+							sp63b_string=="Little confidence" | ///
+							sp63b_string=="Poca" 
 
-	gen 				sp63c_v2=.
-	replace 			sp63c_v2=1 if sp63c_string=="Ninguna" | sp63c_string=="No confidence at all" | sp63c_string=="Nothing" 
-	replace 			sp63c_v2=0 if sp63c_string=="A lot of confidence" | sp63c_string=="Lot" | sp63c_string=="Mucha" | sp63c_string=="Algo" | sp63c_string=="Some" | sp63c_string=="Some confidence" | sp63c_string=="A little" | sp63c_string=="Little" | sp63c_string=="Little confidence" | sp63c_string=="Poca" 
+	gen 				sp63c_v2 = .
+	replace 			sp63c_v2 = 1 if sp63c_string == "Ninguna" | ///
+							sp63c_string == "No confidence at all" | ///
+							sp63c_string == "Nothing" 
+	replace 			sp63c_v2 = 0 if sp63c_string == "A lot of confidence" | ///
+							sp63c_string == "Lot" | ///
+							sp63c_string == "Mucha" | ///
+							sp63c_string == "Algo" | ///
+							sp63c_string == "Some" | ///
+							sp63c_string == "Some confidence" | ///
+							sp63c_string == "A little" | ///
+							sp63c_string == "Little" | ///
+							sp63c_string == "Little confidence" | ///
+							sp63c_string == "Poca" 
 
-	gen 				sp63d_v2=.
-	replace 			sp63d_v2=1 if sp63d_string=="Ninguna" | sp63d_string=="No confidence at all" | sp63d_string=="Nothing" | sp63d_string=="No trust"
-	replace 			sp63d_v2=0 if sp63d_string=="A lot of confidence" | sp63d_string=="Lot" | sp63d_string=="Mucha" | sp63d_string=="Algo" | sp63d_string=="Some" | sp63d_string=="Some confidence" | sp63d_string=="A little" | sp63d_string=="Little" | sp63d_string=="Little confidence" | sp63d_string=="Poca"  
+	gen 				sp63d_v2 = .
+	replace 			sp63d_v2 = 1 if sp63d_string == "Ninguna" | ///
+							sp63d_string == "No confidence at all" | ///
+							sp63d_string == "Nothing" | ///
+							sp63d_string == "No trust"
+	replace 			sp63d_v2 = 0 if sp63d_string == "A lot of confidence" | ///
+							sp63d_string == "Lot" | ///
+							sp63d_string == "Mucha" | ///
+							sp63d_string == "Algo" | ///
+							sp63d_string == "Some" | ///
+							sp63d_string == "Some confidence" | ///
+							sp63d_string == "A little" | ///
+							sp63d_string == "Little" | ///
+							sp63d_string == "Little confidence" | ///
+							sp63d_string == "Poca"  
 
-	gen 				sp63e_v2=.
-	replace 			sp63e_v2=1 if sp63e_string=="Ninguna" | sp63e_string=="No confidence at all" | sp63e_string=="Nothing" | sp63e_string=="No trust"
-	replace 			sp63e_v2=0 if sp63e_string=="A lot of confidence" | sp63e_string=="Lot" | sp63e_string=="Mucha" | sp63e_string=="Algo" | sp63e_string=="Some" | sp63e_string=="Some confidence" | sp63e_string=="A little" | sp63e_string=="Little" | sp63e_string=="Little confidence" | sp63e_string=="Poca"  
+	gen 				sp63e_v2 = .
+	replace 			sp63e_v2 = 1 if sp63e_string == "Ninguna" | ///
+							sp63e_string == "No confidence at all" | ///
+							sp63e_string == "Nothing" | ///
+							sp63e_string == "No trust"
+	replace 			sp63e_v2 = 0 if sp63e_string == "A lot of confidence" | ///
+							sp63e_string == "Lot" | ///
+							sp63e_string == "Mucha" | ///
+							sp63e_string == "Algo" | ///
+							sp63e_string == "Some" | ///
+							sp63e_string == "Some confidence" | ///
+							sp63e_string == "A little" | ///
+							sp63e_string == "Little" | ///
+							sp63e_string == "Little confidence" | ///
+							sp63e_string == "Poca"  
 
-	gen 				sp63f_v2=.
-	replace 			sp63f_v2=1 if sp63f_string=="Ninguna" | sp63f_string=="No confidence at all" | sp63f_string=="Nothing" | sp63f_string=="No trust"
-	replace 			sp63f_v2=0 if sp63f_string=="A lot of confidence" | sp63f_string=="Lot" | sp63f_string=="Mucha" | sp63f_string=="Algo" | sp63f_string=="Some" | sp63f_string=="Some confidence" | sp63f_string=="A little" | sp63f_string=="Little" | sp63f_string=="Little confidence" | sp63f_string=="Poca"  
+	gen 				sp63f_v2 = .
+	replace 			sp63f_v2 = 1 if sp63f_string == "Ninguna" | ///
+							sp63f_string == "No confidence at all" | ///
+							sp63f_string == "Nothing" | ///
+							sp63f_string == "No trust"
+	replace 			sp63f_v2 = 0 if sp63f_string == "A lot of confidence" | ///
+							sp63f_string == "Lot" | ///
+							sp63f_string == "Mucha" | ///
+							sp63f_string == "Algo" | ///
+							sp63f_string == "Some" | ///
+							sp63f_string == "Some confidence" | ///
+							sp63f_string == "A little" | ///
+							sp63f_string == "Little" | ///
+							sp63f_string == "Little confidence" | ///
+							sp63f_string == "Poca"  
 
-	gen 				sp63g_v2=.
-	replace 			sp63g_v2=1 if sp63g_string=="Ninguna" | sp63g_string=="No confidence at all" | sp63g_string=="Nothing" | sp63g_string=="No trust"
-	replace 			sp63g_v2=0 if sp63g_string=="A lot of confidence" | sp63g_string=="Lot" | sp63g_string=="Mucha" | sp63g_string=="Algo" | sp63g_string=="Some" | sp63g_string=="Some confidence" | sp63g_string=="A little" | sp63g_string=="Little" | sp63g_string=="Little confidence" | sp63g_string=="Poca"  
+	gen 				sp63g_v2 = .
+	replace 			sp63g_v2 = 1 if sp63g_string == "Ninguna" | ///
+							sp63g_string == "No confidence at all" | ///
+							sp63g_string == "Nothing" | ///
+							sp63g_string == "No trust"
+	replace 			sp63g_v2 = 0 if sp63g_string == "A lot of confidence" | ///
+							sp63g_string == "Lot" | ///
+							sp63g_string == "Mucha" | ///
+							sp63g_string == "Algo" | ///
+							sp63g_string == "Some" | ///
+							sp63g_string == "Some confidence" | ///
+							sp63g_string == "A little" | ///
+							sp63g_string == "Little" | ///
+							sp63g_string == "Little confidence" | ///
+							sp63g_string == "Poca"  
 
-	gen 				p63stc_v2=.
-	replace 			p63stc_v2=1 if p63stc_string=="Ninguna" | p63stc_string=="No confidence at all" | p63stc_string=="Nothing" | p63stc_string=="No trust" | p63stc_string=="None"
-	replace 			p63stc_v2=0 if p63stc_string=="A lot of confidence" | p63stc_string=="Lot" | p63stc_string=="A lot" | p63stc_string=="Mucha" | p63stc_string=="Algo" | p63stc_string=="Some" | p63stc_string=="Some confidence" | p63stc_string=="A little" | p63stc_string=="Little" | p63stc_string=="Little confidence" | p63stc_string=="Poca"  
+	gen 				p63stc_v2 = .
+	replace 			p63stc_v2 = 1 if p63stc_string == "Ninguna" | ///
+							p63stc_string == "No confidence at all" | ///
+							p63stc_string == "Nothing" | ///
+							p63stc_string == "No trust" |///
+							p63stc_string == "None"
+	replace 			p63stc_v2 = 0 if p63stc_string == "A lot of confidence" | ///
+							p63stc_string == "Lot" | ///
+							p63stc_string == "A lot" | ///
+							p63stc_string == "Mucha" | ///
+							p63stc_string == "Algo" | ///
+							p63stc_string == "Some" | ///
+							p63stc_string == "Some confidence" | ///
+							p63stc_string == "A little" | ///
+							p63stc_string == "Little" | ///
+							p63stc_string == "Little confidence" | ///
+							p63stc_string == "Poca"  
 
-	gen 				p34std_v2=.
-	replace 			p34std_v2=1 if p34std_string=="Ninguna" | p34std_string=="No confidence at all" | p34std_string=="Nothing" | p34std_string=="No trust" | p34std_string=="None"
-	replace 			p34std_v2=0 if p34std_string=="A lot of confidence" | p34std_string=="Lot" | p34std_string=="A lot" | p34std_string=="Mucha" | p34std_string=="Algo" | p34std_string=="Some" | p34std_string=="Some confidence" | p34std_string=="A little" | p34std_string=="Little" | p34std_string=="Little confidence" | p34std_string=="Poca"  
+	gen 				p34std_v2 = .
+	replace 			p34std_v2 = 1 if p34std_string == "Ninguna" | ///
+							p34std_string == "No confidence at all" | ///
+							p34std_string == "Nothing" | ///
+							p34std_string == "No trust" | ///
+							p34std_string == "None"
+	replace 			p34std_v2 = 0 if p34std_string == "A lot of confidence" | ///
+							p34std_string == "Lot" | ///
+							p34std_string == "A lot" | ///
+							p34std_string == "Mucha" | ///
+							p34std_string == "Algo" | ///
+							p34std_string == "Some" | ///
+							p34std_string == "Some confidence" | ///
+							p34std_string == "A little" | ///
+							p34std_string == "Little" | ///
+							p34std_string == "Little confidence" | ///
+							p34std_string == "Poca"  
 
-	gen 				P20ST_I_v2=.
-	replace 			P20ST_I_v2=1 if P20ST_I_string=="Ninguna" | P20ST_I_string=="No confidence at all" | P20ST_I_string=="Nothing" | P20ST_I_string=="No trust" | P20ST_I_string=="None" | P20ST_I_string=="No confidence"
-	replace 			P20ST_I_v2=0 if P20ST_I_string=="A lot of confidence" | P20ST_I_string=="Lot" | P20ST_I_string=="A lot" | P20ST_I_string=="Mucha" | P20ST_I_string=="Algo" | P20ST_I_string=="Some" | P20ST_I_string=="Some confidence" | P20ST_I_string=="A little" | P20ST_I_string=="Little" | P20ST_I_string=="Little confidence" | P20ST_I_string=="Poca"  
+	gen 				P20ST_I_v2 = .
+	replace 			P20ST_I_v2 = 1 if P20ST_I_string == "Ninguna" | ///
+							P20ST_I_string == "No confidence at all" | ///
+							P20ST_I_string == "Nothing" | ///
+							P20ST_I_string == "No trust" | ///
+							P20ST_I_string == "None" | ///
+							P20ST_I_string == "No confidence"
+	replace 			P20ST_I_v2 = 0 if P20ST_I_string == "A lot of confidence" | ///
+							P20ST_I_string == "Lot" | ///
+							P20ST_I_string == "A lot" | ///
+							P20ST_I_string == "Mucha" | ///
+							P20ST_I_string == "Algo" | ///
+							P20ST_I_string == "Some" | ///
+							P20ST_I_string == "Some confidence" | ///
+							P20ST_I_string == "A little" | ///
+							P20ST_I_string == "Little" | ///
+							P20ST_I_string == "Little confidence" | ///
+							P20ST_I_string == "Poca"  
 
-	gen 				P16ST_G_v2=.
-	replace 			P16ST_G_v2=1 if P16ST_G_string=="Ninguna" | P16ST_G_string=="No confidence at all" | P16ST_G_string=="Nothing" | P16ST_G_string=="No trust" | P16ST_G_string=="None" | P16ST_G_string=="No confidence"
-	replace 			P16ST_G_v2=0 if P16ST_G_string=="A lot of confidence" | P16ST_G_string=="Lot" | P16ST_G_string=="A lot" | P16ST_G_string=="Mucha" | P16ST_G_string=="Algo" | P16ST_G_string=="Some" | P16ST_G_string=="Some confidence" | P16ST_G_string=="A little" | P16ST_G_string=="Little" | P16ST_G_string=="Little confidence" | P16ST_G_string=="Poca"
+	gen 				P16ST_G_v2 = .
+	replace 			P16ST_G_v2 = 1 if P16ST_G_string == "Ninguna" | ///
+							P16ST_G_string == "No confidence at all" | ///
+							P16ST_G_string == "Nothing" | ///
+							P16ST_G_string == "No trust" | ///
+							P16ST_G_string == "None" | ///
+							P16ST_G_string == "No confidence"
+	replace 			P16ST_G_v2=0 if P16ST_G_string == "A lot of confidence" | ///
+							P16ST_G_string == "Lot" | ///
+							P16ST_G_string == "A lot" | ///
+							P16ST_G_string == "Mucha" | ///
+							P16ST_G_string == "Algo" | ///
+							P16ST_G_string == "Some" | ///
+							P16ST_G_string == "Some confidence" | ///
+							P16ST_G_string == "A little" | ///
+							P16ST_G_string == "Little" | ///
+							P16ST_G_string == "Little confidence" | ///
+							P16ST_G_string == "Poca"
 
-	gen 				sp37_v2=.
-	replace 			sp37_v2=1 if sp37_string=="No matter how you vote, things will not improve in the futur"
-	replace 			sp37_v2=0 if sp37_string=="The way you vote can change the way things will be in the fu"
+	gen 				sp37_v2 = .
+	replace 			sp37_v2 = 1 if sp37_string == "No matter how you vote, things will not improve in the futur"
+	replace 			sp37_v2 = 0 if sp37_string == "The way you vote can change the way things will be in the fu"
 
 * Create county variable from city names
 	gen 				comuna = ""
@@ -1827,22 +2137,22 @@ Overview
 	gen 				cohort = .
 	replace 			cohort = s2 + 2020 - numinves
 
-	save 				"$data_clean\latinobarometro_final.dta", replace
+	save 				"${data_clean}\latinobarometro_final.dta", replace
 
 /*******************************************************************************
-14. Final Main Dataset
+ 14. Final Main Dataset
 ********************************************************************************/
 
 * The created DB are merged
-	use 				"$data_clean\vacunacion.dta", clear
-	merge 				1:1 code cohort using "$data_clean\proyecciones_getario.dta", nogen
-	merge 				m:1 code using "$data_clean\fase1.dta", nogen
-	merge 				m:1 code using "$data_clean\fallecidos.dta", nogen
-	merge 				m:1 code using "$data_clean\casos_incrementales.dta", nogen
-	merge 				m:1 comuna using "$data_clean\salud_1971.dta", nogen
-	merge 				m:1 comuna using "$data_clean\personas_juridicas.dta", keep(master match) nogen
-	merge 				1:1 comuna cohort using "$data_clean\turnout.dta", keep(master match) nogen
-	merge 				m:1 comuna using "$data_clean\state_repression.dta"
+	use 				"${data_clean}\vacunacion.dta", clear
+	merge 				1:1 code cohort using "${data_clean}\proyecciones_getario.dta", nogen
+	merge 				m:1 code using "${data_clean}\fase1.dta", nogen
+	merge 				m:1 code using "${data_clean}\fallecidos.dta", nogen
+	merge 				m:1 code using "${data_clean}\casos_incrementales.dta", nogen
+	merge 				m:1 comuna using "${data_clean}\salud_1971.dta", nogen
+	merge 				m:1 comuna using "${data_clean}\personas_juridicas.dta", keep(master match) nogen
+	merge 				1:1 comuna cohort using "${data_clean}\turnout.dta", keep(master match) nogen
+	merge 				m:1 comuna using "${data_clean}\state_repression.dta"
 
 * Create impressionable years indicators 
 	gen 				impy1 = 0
@@ -1914,14 +2224,14 @@ Overview
 	label var 			CentroDetencion_impy1 "Detention centers $\times$ Imp. Years (1973-1990)"
 	label var 			CentroDetencion_impy2 "Detention centers $\times$ Imp. Years (1973-1976)"
 
-*	save 				"$data_clean\FinalDataset_Vaccination.dta", replace
-	save 				"$data_clean\finaldataset_main.dta", replace
+*	save 				"${data_clean}\FinalDataset_Vaccination.dta", replace
+	save 				"${data_clean}\finaldataset_main.dta", replace
 	
 /*******************************************************************************
-14. Final Secondary Datasets
+ 14. Final Secondary Datasets
 ********************************************************************************/
 
-	use 				"$data_clean\finaldataset_main.dta", clear
+	use 				"${data_clean}\finaldataset_main.dta", clear
 
 *Create agregated impressionable year variables (at county level) 
 	bysort 				comuna: egen p_proj_county=total(p_proj)
@@ -1965,7 +2275,7 @@ Overview
 	save            `main_collapsed'
 
 * LATINOBAROMETRO
-	use 				"$data_clean\latinobarometro_final.dta", clear
+	use 				"${data_clean}\latinobarometro_final.dta", clear
 	merge 				m:1 comuna cohort using `main_collapsed', ///
 							keep(match using) nogen
 
@@ -1973,10 +2283,10 @@ Overview
 		egen 				z_`latinob_var'=std(`latinob_var')
 		egen 				z_`latinob_var'_v2=std(`latinob_var'_v2)
 	}
-	save 				"$data_clean\latinobarometro_final.dta", replace
+	save 				"${data_clean}\latinobarometro_final.dta", replace
 
 * 1970 HEALTH STATISTICS (county level)
-	import 				excel "$data_raw\salud_1971.xlsx", sheet("Sheet3") firstrow clear
+	import 				excel "${data_raw}\salud_1971.xlsx", sheet("Sheet3") firstrow clear
 	merge 				m:m comuna using `main_collapsed', ///
 							keep(match using) nogen
 							
@@ -1994,7 +2304,7 @@ Overview
 	label var 			sh_consultas "Medical appointments per capita in 1971"
 	label var 			sh_leche "Kg of milk distributed per capita in 1971"
 	
-	save 				"$data_clean\health1970_county_final.dta", replace
+	save 				"${data_clean}\health1970_county_final.dta", replace
 
 * 1970 HEALTH STATISTICS (area level)
 
@@ -2029,10 +2339,10 @@ Overview
 	label var 			sh_antisarampionosa "Share of vaccinated pop. for measles in 1971"
 	label var 			sh_antiinlfuenza "Share of vaccinated pop. for influenza in 1971"
 	
-	save 				"$data_clean\health1970_area_final.dta", replace
+	save 				"${data_clean}\health1970_area_final.dta", replace
 
 * MOBILITY
-	use 				"$data_raw\movilidad_isci.dta", clear
+	use 				"${data_raw}\movilidad_isci.dta", clear
 	merge 				m:1 comuna using `main_collapsed', nogen
 	
 * Create lockdown, critic periods indicators, and interactions
@@ -2090,7 +2400,7 @@ Overview
 	label var 			sh_casos_prevac "Sh. COVID cases"
 	label var 			sh_fall_prevac "Sh. COVID deaths"
 	
-	save 				"$data_clean\movilidad_final.dta", replace
+	save 				"${data_clean}\movilidad_final.dta", replace
 
 * FATALITIES
 	use 				"$path3\FinalDataset_Vaccination.dta"
@@ -2104,7 +2414,7 @@ Overview
 * Collapse data at age group level
 	collapse 			(sum) p_proj, ///
 							by(age_group comuna code Dregimientos ln_dist_mil_fac latitud longitud)
-	merge 				1:1 age_group code using "$data_raw\fallecidos_comuna_edad.dta", ///
+	merge 				1:1 age_group code using "${data_raw}\fallecidos_comuna_edad.dta", ///
 							keep(match) nogen
 
 * Create share variables
@@ -2112,10 +2422,10 @@ Overview
 	egen 				mean_sh_fall_prevac_cohort = mean(sh_fall_prevac_cohort), by(age_group)
 	egen 				sd_sh_fall_prevac_cohort = sd(sh_fall_prevac_cohort), by(age_group)
 	gen 				z_fall_prevac_cohort = (sh_fall_prevac_cohort - mean_sh_fall_prevac_cohort) / sd_sh_fall_prevac_cohort
-	save 				"$data_clean\fallecidos_final.dta", replace
+	save 				"${data_clean}\fallecidos_final.dta", replace
 
 * INFLUENZA VACCINATION CAMPAING
-	use 				"$data_raw\camp_inf_nacional.dta", clear
+	use 				"${data_raw}\camp_inf_nacional.dta", clear
 	merge 				m:1 comuna using `main_collapsed', nogen
 
 * Variable labels
@@ -2123,4 +2433,4 @@ Overview
 	label 				var ln_dist_mil_fac "Ln distance to military facility"
 	label 				var sh_vac_inf "Influenza vaccination rate"
 
-	save 				"$data_clean\camp_inf_final.dta", replace
+	save 				"${data_clean}\camp_inf_final.dta", replace
