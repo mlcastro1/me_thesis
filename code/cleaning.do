@@ -691,6 +691,9 @@ Overview
 /*******************************************************************************
  12. Turnout
 ********************************************************************************/
+/*
+Note: had to run this section and store original turnout dataset off Github 
+because of their sizes
 
 * 2017
 	import 					delimited "${data_raw}\turnout_2017.csv", clear
@@ -756,6 +759,7 @@ Overview
 	label 					var turnout_2020 "2020 turnout rate"
 
 	save 					"${data_clean}\turnout.dta", replace
+*/
 
 /*******************************************************************************
  13. Survey data from Latinobarometro (1995-2018)
