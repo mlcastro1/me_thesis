@@ -1,4 +1,49 @@
-use "$path\movilidad_final.dta", clear
+/*******************************************************************************
+********************************************************************************
+********************************************************************************
+Purpose: 				Create Figure 1: Mobility per Week
+						
+						Author: Leonor Castro
+						Last Edited: 15 Sept 2023
 
-graph box var_salidas [pw=$W], over(semana, relabel(1 "2020/03/02" 2 " " 3 " " 4 " " 5 " " 6 " " 7 " " 8 " " 9 " " 10 "2020/04/27" 11 " " 12 " " 13 " " 14 " " 15 " " 16 " " 17 " " 18 " " 19 " " 20 "2020/07/06" 21 " " 22 " " 23 " " 24 " " 25 " " 26 " " 27 " " 28 " " 29 " " 30 "2020/09/21" 31 " " 32 " " 33 " " 34 " " 35 " " 36 " " 37 " " 38 " " 39 " " 40 "2020/11/30" 41 " " 42 " " 43 " " 44 " " 45 " " 46 " " 47 " " 48 " " 49 " " 50 "2021/02/08" 51 " " 52 " " 53 " " 54 " " 55 " " 56 " " 57 " " 58 " " 59 " " 60 "2021/04/26" 61 " " 62 " " 63 " " 64 " " 65 " " 66 " " 67 " " 68 " " 69 " " 70 "2021/07/05" 71 " " 72 " " 73 " " 74 " " 75 " " 76 " " 77 " " 78 " " 79 " " 80 "2021/09/20") label(labsize(vsmall))) noout ytitle("Mobility") b1title("Week") note("") ylabel(, nogrid) 
-graph export "Figure2.pdf", as(pdf) name("Graph") replace
+Overview
+	- Load sata and select sample
+	- Collapse data at week level and generate summary stats per week
+	- Create and export figure
+	
+*******************************************************************************
+ Load data and select sample
+********************************************************************************/
+
+	use 			"${data_clean}\movilidad_final.dta", clear
+	
+/*******************************************************************************
+ Clean date variable to be used as label in x axis
+********************************************************************************/
+
+	replace			fecha_inicio = subinstr(fecha_inicio,"-","/",.)
+	encode			fecha_inicio, gen(date)
+	
+/*******************************************************************************
+ Collapse data at week level and generate summary stats per week
+********************************************************************************/
+
+	collapse		(mean) var_salidas_mean = var_salidas ///
+						(sd) var_salidas_sd = var_salidas [ fw = ${W} ], by(date)
+
+	gen				var_salidas_u = var_salidas_mean + ( 1.96*var_salidas_sd )
+	gen				var_salidas_l = var_salidas_mean - ( 1.96*var_salidas_sd )
+	
+/*******************************************************************************
+ Create and export figure
+********************************************************************************/
+
+	twoway 			(scatter var_salidas_mean date, ///
+						msize(small) mcolor(black*0.55)) ///
+						(rcap var_salidas_u var_salidas_l date, ///
+						lc(black*0.55) lw(medthin)), ///
+						ylabel(, format(%2.1fc)) ///
+						xscale(r(0 82)) xlabel(1 20 40 60 80, valuelabel labsize(small)) ///
+						ytitle("Mobility") xtitle("Week") 
+						
+	graph 			export "${results}\Figure2.png", replace

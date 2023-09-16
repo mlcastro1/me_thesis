@@ -1,10 +1,70 @@
-use "$path\FinalDataset_Vaccination.dta", clear
+/*******************************************************************************
+********************************************************************************
+********************************************************************************
+Purpose: 				Create Figure 1: Vaccination Rate per Cohort
+						
+						Author: Leonor Castro
+						Last Edited: 15 Sept 2023
 
-forval y = 30/80 {
-	if mod(`y', 5) {
-		label def cohort_label `y' "`:di "`=uchar(28)'"'", add
-	}
-}
-label value cohort cohort_label
-graph box sh_vac_may23 if main_sample==1 [pw=$W], over(cohort) noout ytitle("Vaccination Rate") b1title("Cohorts") note("") ylabel(, nogrid) ascategory asyvars box(1, color(gs11)) box(2, color(gs11)) box(3, color(gs11)) box(4, color(gs11)) box(5, color(gs11)) box(6, color(gs11)) box(7, color(gs11)) box(8, color(gs11)) box(9, color(gs11)) box(10, color(gs11)) box(11, color(gs11)) box(12, color(gs11)) box(13, color(gs11)) box(14, color(gs11)) box(15, color(gs11)) box(16, color(gs11)) box(17, color(gs11)) box(18, color(gs11)) box(19, color(gs11)) box(20, color(gs11)) box(21, color(gs11)) box(22, color(gs11)) box(23, color(gs11)) box(24, color(gs11)) box(25, color(gs11)) box(26, color(gs11)) box(27, color(gs11)) box(28, color(gs11)) box(29, color(gs11)) box(30, color(gs11)) box(31, color(gs11)) box(32, color(gs11)) box(33, color(gs11)) box(34, color(gs8)) box(35, color(gs6)) box(36, color(gs4)) box(37, color(gs2)) box(38, color(gs2)) box(39, color(gs2)) box(40, color(gs2)) box(41, color(gs2)) box(42, color(gs4)) box(43, color(gs6)) box(44, color(gs8)) box(45, color(gs11)) box(46, color(gs11)) box(47, color(gs11)) box(48, color(gs11)) box(49, color(gs11)) box(50, color(gs11)) box(51, color(gs11)) 
-graph export "Figure1.pdf", as(pdf) name("Graph") replace
+Overview
+	- Load sata and select sample
+	- Collapse data at cohort level and generate summary stats per cohort
+	- Create variable to control colors in graph
+	- Create and export figure
+	
+*******************************************************************************
+ Load data and select sample
+********************************************************************************/
+
+	use 			"${data_clean}\finaldataset_main.dta", clear
+	keep			if main_sample == 1
+
+/*******************************************************************************
+ Collapse data at cohort level and generate summary stats per cohort
+********************************************************************************/
+
+	collapse		(mean) sh_vac_may23_mean = sh_vac_may23 ///
+						(sd) sh_vac_may23_sd = sh_vac_may23 [ fw = ${W} ], by(cohort)
+					
+	gen				sh_vac_may23_u = sh_vac_may23_mean + ( 1.96*sh_vac_may23_sd )
+	gen				sh_vac_may23_l = sh_vac_may23_mean - ( 1.96*sh_vac_may23_sd )
+
+/*******************************************************************************
+ Create variable to control colors in graph
+********************************************************************************/
+
+	gen				color = .
+	replace			color = 1 if cohort < 64 | cohort > 74
+	replace			color = 2 if inlist(cohort,64,74)
+	replace			color = 3 if inlist(cohort,65,73)
+	replace			color = 4 if inlist(cohort,66,72)
+	replace			color = 5 if inrange(cohort,65,71)
+
+/*******************************************************************************
+ Create and export figure
+********************************************************************************/
+
+	twoway 			(scatter sh_vac_may23_mean cohort if color == 1, ///
+						msize(medium) mcolor(black*0.3)) ///
+						(scatter sh_vac_may23_mean cohort if color == 2, ///
+						msize(medium) mcolor(black*0.35)) ///
+						(scatter sh_vac_may23_mean cohort if color == 3, ///
+						msize(medium) mcolor(black*0.4)) ///
+						(scatter sh_vac_may23_mean cohort if color == 4, ///
+						msize(medium) mcolor(black*0.55)) ///
+						(scatter sh_vac_may23_mean cohort if color == 5, ///
+						msize(medium) mcolor(black*0.7)) ///
+						(rcap sh_vac_may23_u sh_vac_may23_l cohort if color == 1, ///
+						lc(black*0.3) lw(medthin)) ///
+						(rcap sh_vac_may23_u sh_vac_may23_l cohort if color == 2, ///
+						lc(black*0.35) lw(medthin)) ///
+						(rcap sh_vac_may23_u sh_vac_may23_l cohort if color == 3, ///
+						lc(black*0.4) lw(medthin)) ///
+						(rcap sh_vac_may23_u sh_vac_may23_l cohort if color == 4, ///
+						lc(black*0.55) lw(medthin)) ///
+						(rcap sh_vac_may23_u sh_vac_may23_l cohort if color == 5, ///
+						lc(black*0.7) lw(medthin)), ///
+						yscale(r(0 1)) ylabel(, format(%2.1fc)) ///
+						ytitle("Vaccination Rate") xtitle("Cohort")
+						
+	graph 			export "${results}\Figure1.png", replace
