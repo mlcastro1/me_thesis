@@ -15,7 +15,7 @@ Do-file overview:
 	
 	global				raw_data "${gh_me_thesis}\data\raw"
 	
-	global				raw_data "${gh_me_thesis}\data\clean"
+	global				clean_data "${gh_me_thesis}\data\clean"
 
 	global 				results "${gh_me_thesis}\results"
 

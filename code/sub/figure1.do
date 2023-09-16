@@ -16,7 +16,7 @@ Overview
  Load data and select sample
 ********************************************************************************/
 
-	use 			"${data_clean}\finaldataset_main.dta", clear
+	use 			"${clean_data}\finaldataset_main.dta", clear
 	keep			if main_sample == 1
 
 /*******************************************************************************
@@ -65,6 +65,7 @@ Overview
 						(rcap sh_vac_may23_u sh_vac_may23_l cohort if color == 5, ///
 						lc(black*0.7) lw(medthin)), ///
 						yscale(r(0 1)) ylabel(, format(%2.1fc)) ///
-						ytitle("Vaccination Rate") xtitle("Cohort")
+						ytitle("Vaccination Rate") xtitle("Cohort") ///
+						note("Note: This figure displays the mean vaccination rates for each cohort as of May 23, 2021, across counties, along with their 95% confidence intervals. Counties" "with aggregated vaccination rates exceeding one have been excluded from the analysis. Cohorts that experienced their impressionable years between 1973" "and 1976 are highlighted in darker colors.", span size(vsmall))
 						
 	graph 			export "${results}\Figure1.png", replace
