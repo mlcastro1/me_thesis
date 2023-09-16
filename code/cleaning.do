@@ -7,8 +7,7 @@ Purpose: 				Prepare data for analysis
 						Last Edited: 14 Jan 2023
 
 Overview
-	1. Set paths and globals
-	2. Data on the number of vaccinated people per date and cohort 
+	1. Data on the number of vaccinated people per date and cohort 
 		- with first shot
 		- with unique shot
 		- combine both data
@@ -33,19 +32,12 @@ Overview
 		- Mobility
 		- Fatalities
  
-********************************************************************************
- 1. Set paths and globals
+*******************************************************************************
+ 1. Data on the number of vaccinated people per date and cohort 
+ Extracted from: https://github.com/MinCiencia/Datos-COVID19 (product 81)
 ********************************************************************************/
 
 	clear 			all 
-
-	global 			data_raw "C:\Users\lc429\Documents\GitHub\me_thesis\data\raw"
-	global 			data_clean "C:\Users\lc429\Documents\GitHub\me_thesis\data\clean"
-
-/*******************************************************************************
- 2. Data on the number of vaccinated people per date and cohort 
- Extracted from: https://github.com/MinCiencia/Datos-COVID19 (product 81)
-********************************************************************************/
 	
 	local 			list_dates_1 mar2 mar3 mar4 mar5 mar6 mar7 mar8 mar9 mar10 ///
 						mar11 mar12 mar13 mar14 mar15 mar16 mar17 mar18 mar19 mar20 ///
@@ -355,7 +347,7 @@ Overview
 	label var 			cuaren "Numbers of days under lockdown until start of Plan Paso a Paso (DEIS)"
 
 * COMBINE DATA
-	merge 				m:m code using "${data_clean}\paso_a_paso.dta", nogen
+	merge 				1:1 code using "${data_clean}\paso_a_paso.dta", nogen
 	
 *Total number of days under lockdown
 	egen 				lockd_prevac=rowtotal(cuaren fase1_prevac)
@@ -693,7 +685,7 @@ Overview
 ********************************************************************************/
 /*
 Note: had to run this section and store original turnout dataset off Github 
-because of their sizes
+because of raw dataset is too large and can't be store on Github 
 
 * 2017
 	import 					delimited "${data_raw}\turnout_2017.csv", clear
@@ -1630,7 +1622,7 @@ because of their sizes
 	replace 			p63stc_v2 = 1 if p63stc_string == "Ninguna" | ///
 							p63stc_string == "No confidence at all" | ///
 							p63stc_string == "Nothing" | ///
-							p63stc_string == "No trust" |///
+							p63stc_string == "No trust" | ///
 							p63stc_string == "None"
 	replace 			p63stc_v2 = 0 if p63stc_string == "A lot of confidence" | ///
 							p63stc_string == "Lot" | ///
@@ -2153,7 +2145,6 @@ because of their sizes
 	merge 				m:1 code using "${data_clean}\fase1.dta", nogen
 	merge 				m:1 code using "${data_clean}\fallecidos.dta", nogen
 	merge 				m:1 code using "${data_clean}\casos_incrementales.dta", nogen
-	merge 				m:1 comuna using "${data_clean}\salud_1971.dta", nogen
 	merge 				m:1 comuna using "${data_clean}\personas_juridicas.dta", keep(master match) nogen
 	merge 				1:1 comuna cohort using "${data_clean}\turnout.dta", keep(master match) nogen
 	merge 				m:1 comuna using "${data_clean}\state_repression.dta"
@@ -2228,7 +2219,6 @@ because of their sizes
 	label var 			CentroDetencion_impy1 "Detention centers $\times$ Imp. Years (1973-1990)"
 	label var 			CentroDetencion_impy2 "Detention centers $\times$ Imp. Years (1973-1976)"
 
-*	save 				"${data_clean}\FinalDataset_Vaccination.dta", replace
 	save 				"${data_clean}\finaldataset_main.dta", replace
 	
 /*******************************************************************************
@@ -2242,17 +2232,35 @@ because of their sizes
 	gen 				impy1_county=impy1*p_proj/p_proj_county
 	gen 				impy2_county=impy2*p_proj/p_proj_county
 
-*Collapse data at county level
-	collapse 			(sum) p_proj vac_acc_may23 vac_ontime4 impy1_county impy2_county, ///
-							by(comuna shVictims_70 shVictims_70_10 DVictims ///
+*Collapse data at county x cohort level
+	collapse 			(sum) p_proj vac_acc_may23 vac_ontime4 ///
+							(max) impy1 impy2 impy1_county impy2_county ///
+							shVictims_70 shVictims_70_10 DVictims ///
 							DCentroDetencion CentroDetencion ln_centro_det Dregimientos ///
 							ln_dist_mil_fac Pop70 sh_rural_70 lnDistStgo lnDistRegCapital ///
-							IDProv share_allende70 share_alessandri70 Turnout70 lnDistStgo ///
-							lnDistRegCapital landlocked Pop70_pthousands Houses_pc ///
+							IDProv share_allende70 share_alessandri70 Turnout70 ///
+							landlocked Pop70_pthousands Houses_pc ///
 							SocialOrg_pop70 churches_pop70 sh_educ_12more densidad_1970 ///
-							sh_rural_70 sh_econactivepop_70 sh_women_70 TV ari_1973 index1b ///
+							sh_econactivepop_70 sh_women_70 TV ari_1973 index1b ///
 							latitud longitud code casos_prevac p_jur DMilfac50 ///
-							DMilfac100 DMilfacmean n_locales fall_prevac)
+							DMilfac100 DMilfacmean n_locales fall_prevac, ///
+							by(comuna cohort)
+							
+	tempfile        	main_countycohort
+	save            	`main_countycohort'
+	
+*Collapse data at county level
+	collapse 			(sum) p_proj vac_acc_may23 vac_ontime4 impy1_county impy2_county  ///
+							(max) shVictims_70 shVictims_70_10 DVictims ///
+							DCentroDetencion CentroDetencion ln_centro_det Dregimientos ///
+							ln_dist_mil_fac Pop70 sh_rural_70 lnDistStgo lnDistRegCapital ///
+							IDProv share_allende70 share_alessandri70 Turnout70 ///
+							landlocked Pop70_pthousands Houses_pc ///
+							SocialOrg_pop70 churches_pop70 sh_educ_12more densidad_1970 ///
+							sh_econactivepop_70 sh_women_70 TV ari_1973 index1b ///
+							latitud longitud code casos_prevac p_jur DMilfac50 ///
+							DMilfac100 DMilfacmean n_locales fall_prevac, ///
+							by(comuna)
 
 * Create interaction variables
 	foreach 			var of varlist shVictims_70 shVictims_70_10 DVictims ///
@@ -2275,31 +2283,29 @@ because of their sizes
 	label var 			Dregimientos_impy2_county "Indicator military presence $\times$ County Imp. Years (1973-1976)"
 	label var 			sh_p_jur "Legal entities per 1,000 inhab."
 
-	tempfile        main_collapsed
-	save            `main_collapsed'
+	tempfile        	main_county
+	save            	`main_county'
 
 * LATINOBAROMETRO
 	use 				"${data_clean}\latinobarometro_final.dta", clear
-	merge 				m:1 comuna cohort using `main_collapsed', ///
+	merge 				m:1 comuna cohort using `main_countycohort', ///
 							keep(match using) nogen
-
-	foreach 			latinob_var of varlist sp37 sp21 sp63a sp63b sp63d sp63e sp63g P20ST_I P16ST_G p63stc {
-		egen 				z_`latinob_var'=std(`latinob_var')
-		egen 				z_`latinob_var'_v2=std(`latinob_var'_v2)
-	}
+	
 	save 				"${data_clean}\latinobarometro_final.dta", replace
 
 * 1970 HEALTH STATISTICS (county level)
 	import 				excel "${data_raw}\salud_1971.xlsx", sheet("Sheet3") firstrow clear
-	merge 				m:m comuna using `main_collapsed', ///
+	merge 				m:1 comuna using `main_county', ///
 							keep(match using) nogen
 							
 * Collapse data at county level
-	collapse 			(sum) consultas leche, ///
-							by(Dregimientos ln_dist_mil_fac Pop70 sh_rural_70 ///
+	collapse 			(sum) consultas leche ///
+							(max) Dregimientos ln_dist_mil_fac Pop70 sh_rural_70 ///
 							lnDistStgo lnDistRegCapital share_allende70 share_alessandri70 ///
-							IDProv comuna latitud longitud area antivariolica antitifica ///
-							antidifterica mixta antipoliomielitica antisarampionosa antiinlfuenza)
+							IDProv latitud longitud antivariolica antitifica ///
+							antidifterica mixta antipoliomielitica ///
+							antisarampionosa antiinlfuenza, ///
+							by(comuna area)
 * Create share variables 
 	gen 				sh_consultas=consultas/Pop70
 	gen 				sh_leche=leche/Pop70
@@ -2325,8 +2331,10 @@ because of their sizes
 * Collapse data at area level
 	collapse 			(sum) Dregimientos_area ln_dist_mil_fac_area Pop70 ///
 							sh_rural_70_area lnDistStgo_area lnDistRegCapital_area ///
-							share_allende70_area share_alessandri70_area, ///
-							by(area antivariolica antitifica antidifterica mixta antipoliomielitica antisarampionosa antiinlfuenza)
+							share_allende70_area share_alessandri70_area ///
+							(max) antivariolica antitifica antidifterica mixta ///
+							antipoliomielitica antisarampionosa antiinlfuenza, ///
+							by(area)
 							
 *Create share variables 
 	foreach 			var in antivariolica antitifica antidifterica mixta ///
@@ -2346,8 +2354,8 @@ because of their sizes
 	save 				"${data_clean}\health1970_area_final.dta", replace
 
 * MOBILITY
-	use 				"${data_raw}\movilidad_isci.dta", clear
-	merge 				m:1 comuna using `main_collapsed', nogen
+	use 				"${data_clean}\movilidad_isci.dta", clear
+	merge 				m:1 comuna using `main_county', nogen
 	
 * Create lockdown, critic periods indicators, and interactions
 	gen 				fase_1 = 0
@@ -2407,7 +2415,7 @@ because of their sizes
 	save 				"${data_clean}\movilidad_final.dta", replace
 
 * FATALITIES
-	use 				"$path3\FinalDataset_Vaccination.dta"
+	use 				"${data_clean}\finaldataset_main.dta"
 	gen 				age_group=""
 	replace 			age_group="40a49" if cohort>=40 & cohort<50
 	replace 			age_group="50a59" if cohort>=50 & cohort<60
@@ -2416,9 +2424,10 @@ because of their sizes
 	drop if 			age_group==""
 	
 * Collapse data at age group level
-	collapse 			(sum) p_proj, ///
-							by(age_group comuna code Dregimientos ln_dist_mil_fac latitud longitud)
-	merge 				1:1 age_group code using "${data_raw}\fallecidos_comuna_edad.dta", ///
+	collapse 			(sum) p_proj ///
+							(max) code Dregimientos ln_dist_mil_fac latitud longitud, ///
+							by(age_group comuna)
+	merge 				1:1 age_group code using "${data_clean}\fallecidos_comuna_edad.dta", ///
 							keep(match) nogen
 
 * Create share variables
@@ -2429,8 +2438,8 @@ because of their sizes
 	save 				"${data_clean}\fallecidos_final.dta", replace
 
 * INFLUENZA VACCINATION CAMPAING
-	use 				"${data_raw}\camp_inf_nacional.dta", clear
-	merge 				m:1 comuna using `main_collapsed', nogen
+	use 				"${data_clean}\camp_inf_nacional.dta", clear
+	merge 				m:1 comuna using `main_county', nogen
 
 * Variable labels
 	label 				var ln_dist_mil_fac_impy2_county "Ln distance to military facility $\times$ County Imp. Years (1973-1976)"
