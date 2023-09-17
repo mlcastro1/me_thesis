@@ -26,26 +26,23 @@ Do-file overview:
 	global 				strep_vars shVictims_70_10 DVictims DCentroDetencion ///
 							ln_centro_det ln_dist_mil_fac
 							
-	global 				controls Pop70 sh_rural_70 lnDistStgo lnDistRegCapital ///
-							share_allende70 share_alessandri70
+	global 				controls Pop70 sh_rural_70 lnDistStgo ///
+							lnDistRegCapital share_allende70 share_alessandri70
 							
 	global 				W p_proj
 	
-	global 				se_vac spatial latitude(latitud) longitude(longitud) ///
+	global 				conley_se spatial latitude(latitud) longitude(longitud) ///
 							distcutoff(75)
-							
-	global 				se_mob spatial latitude(latitud) longitude(longitud) ///
-							distcutoff(75)
-							
+														
 	global 				balance_vars Turnout70 landlocked Houses_pc SocialOrg_pop70 ///
 							churches_pop70 sh_educ_12more densidad_1970 ///
 							sh_econactivepop_70 sh_women_70 TV ari_1973 index1b 
 							
-	global 				health_balance_vars_county consultas leche 
+	global 				health_balance_vars_county sh_consultas sh_leche 
 	
-	global 				health_balance_vars_area antivariolica antitifica ///
-							antidifterica mixta antipoliomielitica antisarampionosa ///
-							antiinlfuenza
+	global 				health_balance_vars_area sh_antivariolica sh_antitifica ///
+							sh_antidifterica sh_mixta sh_antipoliomielitica ///
+							sh_antisarampionosa sh_antiinlfuenza
 
 /*******************************************************************************
  Figure settings
