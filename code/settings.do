@@ -13,9 +13,9 @@ Do-file overview:
 
 	global				gh_me_thesis "C:\Users\lc429\Documents\GitHub\me_thesis"
 	
-	global				raw_data "${gh_me_thesis}\data\raw"
+	global				data_raw "${gh_me_thesis}\data\raw"
 	
-	global				clean_data "${gh_me_thesis}\data\clean"
+	global				data_clean "${gh_me_thesis}\data\clean"
 
 	global 				results "${gh_me_thesis}\results"
 
@@ -26,10 +26,14 @@ Do-file overview:
 	global 				strep_vars shVictims_70_10 DVictims DCentroDetencion ///
 							ln_centro_det ln_dist_mil_fac
 							
-	global 				controls Pop70 sh_rural_70 lnDistStgo ///
-							lnDistRegCapital share_allende70 share_alessandri70
+	global 				controls Pop70_cond sh_rural_70_cond lnDistStgo lnDistRegCapital ///
+							share_allende70_cond share_alessandri70_cond ///
+							Pop70_miss sh_rural_70_miss share_allende70_miss ///
+							share_alessandri70_miss
 							
 	global 				W p_proj
+	
+	global				W_70 Pop70
 	
 	global 				conley_se spatial latitude(latitud) longitude(longitud) ///
 							distcutoff(75)

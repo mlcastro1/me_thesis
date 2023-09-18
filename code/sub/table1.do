@@ -15,7 +15,7 @@ Overview
  Load data and select sample
 ********************************************************************************/
 
-	use 			"${clean_data}\finaldataset_main.dta", clear
+	use 			"${data_clean}\finaldataset_main.dta", clear
 
 /*******************************************************************************
  Clean remaining variable labels
@@ -42,7 +42,7 @@ Overview
  Set locals with specification details
 ********************************************************************************/
 	
-	local			controls Pop70_pthousands sh_rural_70 lnDistStgo ///
+	local			controlvars Pop70_pthousands sh_rural_70 lnDistStgo ///
 						lnDistRegCapital share_allende70 share_alessandri70		// change Pop70 for Pop70_pthousands
 	local			weights [pw=Pop70]
 	local			fmt "%9.3f"
@@ -52,18 +52,18 @@ Overview
  Generate summary statistics
 ********************************************************************************/
 
-	foreach 		var of varlist `controls' {									// loop over control variables
+	foreach 		var of local controlvars {									// loop over control variables
 		
 		local 			vname_`var' : var label `var'							// store variable label
 		
-		reg				`var' `weights'
+		reg				`var' [pw = ${W_70}]
 				
 		local 			mean_`var': display `fmt' e(b)[1,1]						// store mean
 		local 			sdev_`var': display `fmt' e(V)[1,1]^0.5					// store standard deviation
 		local 			obs_`var': display  e(N)								// store sample size
 		
 	*Regression military presence, no controls
-		acreg 			`var' ln_dist_mil_fac `weights', ${conley_se}
+		acreg 			`var' ln_dist_mil_fac [pw = ${W_70}], ${conley_se}
 		
 		local			diff_`var': display `fmt' e(b)[1,1]						// store coefficient
 		
@@ -89,14 +89,14 @@ Overview
 		
 		local 			vname_`var' : var label `var'							// store variable label
 		
-		reg				`var' `weights'
+		reg				`var' [pw=${W_70}]
 				
 		local 			mean_`var': display `fmt' e(b)[1,1]						// store mean
 		local 			sdev_`var': display `fmt' e(V)[1,1]^0.5					// store standard deviation
 		local 			obs_`var': display  e(N)								// store sample size
 		
 	*Regression military presence, no controls
-		acreg 			`var' ln_dist_mil_fac `weights', ${conley_se}
+		acreg 			`var' ln_dist_mil_fac [pw = ${W_70}], ${conley_se}
 		
 		local			diff_`var': display `fmt' e(b)[1,1]						// store coefficient
 		
@@ -117,7 +117,7 @@ Overview
 		
 	*Refression military presence, with controls
 		acreg 		`var' ln_dist_mil_fac ///
-						${controls} i.IDProv `weights', ${conley_se}
+						${controls} i.IDProv [pw = ${W_70}], ${conley_se}
 		
 		local			diffc_`var': display `fmt' e(b)[1,1]					// store coefficient
 		
@@ -154,7 +154,7 @@ Overview
 	_n 				" & Mean & SD & Obs. & Coeff. & P-Value & Coeff. & P-Value \\" ///
 	_n 				"\hline" 
 	
-	foreach 		var of varlist `controls' $balance_vars {					// loop over controls and additional balance variables
+	foreach 		var of varlist `controlvars' $balance_vars {				// loop over controls and additional balance variables
 		
 		file 			write balance_table ///
 		_n 				"`vname_`var'' & `mean_`var'' & `sdev_`var'' & `obs_`var'' & `diff_`var'' & `pval_`var''`star_`var'' & `diffc_`var'' & `pvalc_`var''`starc_`var'' \\"	
@@ -164,6 +164,6 @@ Overview
 	file 		    write balance_table ///
 	_n 				"\hline\hline" ///
 	_n 				"\multicolumn{8}{l}{\footnotesize \sym{*} \(p<.0.05\), \sym{**} \(p<.01\), \sym{***} \(p<.001\)}\\" ///
-	_n 				"\multicolumn{8}{p{17cm}}{\footnotesize Note: Column (1) reports mean and standard deviation of each variable stated in the first column. Column (2) reports the OLS coefficients estimates of military presence over each variable stated in the first column, by using the logarithmic distance to the closest military facility as independent variable, and corresponding p-value. Column (3) reports the OLS coefficients and corresponding p-values including province fixed effects, population in 1970, urban share in 1970, logarithmic distance to Santiago and to the regional capital, and the vote shares obtained by Allende and Alessandri in the 1970 elections as control variables. Observations are weighted by 1970 county population size. Conley standard errors in parentheses.}\\" ///
+	_n 				"\multicolumn{8}{p{17cm}}{\footnotesize Note: Unit of observation: county. Column (1) reports the mean and standard deviation of each variable stated in the first column. Column (2) reports the OLS coefficients and corresponding p-value obtained when estimating each variable stated in the first column on the logarithmic distance to the closest military facility. Column (3) reports the OLS coefficients and corresponding p-values resulted from estimating each variable stated in the first column on the logarithmic distance to the closest military facility, including province fixed effects, and controlling for population in 1970, urban share in 1970, logarithmic distance to Santiago and to the regional capital, and the vote shares obtained by Allende and Alessandri in the 1970 elections. Note that missing values in the control variables are imputed with the sample mean, and indicator variables for these cases are added as controls. P-values in columns (2) and (3) are estimated using Conley standard errors, and observations are weighted by the 1970 population size.}\\" ///
 	_n 				"\end{tabular}" 
 	file 			close balance_table

@@ -1,5 +1,32 @@
-clear
-use "$path\Latinobarometro_final.dta"
+/*******************************************************************************
+********************************************************************************
+Purpose: 				Create Table 6: State Repression, Impressionable Years 
+						and Mistrust: Latinobarometro
+						
+						Author: Leonor Castro
+						Last Edited: 16 Sept 2023
+
+Overview:
+	- Load county-level data
+	- Create additional variables specific to this dofile
+	- Run regressions 
+	- Create and export table
+	
+Additional notes:
+	- This code generates BKY (2006) sharpened two-stage q-values as described in 
+	Anderson (2008), "Multiple Inference and Gender Differences in the Effects of 
+	Early Intervention: A Reevaluation of the Abecedarian, Perry Preschool, and 
+	Early Training Projects", Journal of the American Statistical Association, 
+	103(484), 1481-1495
+	- BKY (2006) sharpened two-stage q-values are introduced in Benjamini, 
+	Krieger, and Yekutieli (2006), "Adaptive Linear Step-up Procedures that 
+	Control the False Discovery Rate", Biometrika, 93(3), 491-507
+
+*******************************************************************************
+ Load county-level data
+********************************************************************************/
+
+use "$path\Latinobarometro_final.dta", clear
 
 global latinob_vars sp21 sp63a sp63b sp63d sp63e sp63g P20ST_I P16ST_G p63stc
 
@@ -10,14 +37,7 @@ foreach latinob_var of varlist $latinob_vars {
 	global `latinob_var'_pv=`r(p)'
 }
 
-* This code generates BKY (2006) sharpened two-stage q-values as described in Anderson (2008), "Multiple Inference and Gender Differences in the Effects of Early Intervention: A Reevaluation of the Abecedarian, Perry Preschool, and Early Training Projects", Journal of the American Statistical Association, 103(484), 1481-1495
 
-* BKY (2006) sharpened two-stage q-values are introduced in Benjamini, Krieger, and Yekutieli (2006), "Adaptive Linear Step-up Procedures that Control the False Discovery Rate", Biometrika, 93(3), 491-507
-
-* Last modified: M. Anderson, 11/20/07
-* Test Platform: Stata/MP 10.0 for Macintosh (Intel 32-bit), Mac OS X 10.5.1
-* Should be compatible with Stata 10 or greater on all platforms
-* Likely compatible with with Stata 9 or earlier on all platforms (remove "version 10" line below)
 clear
 set obs 9
 gen pval=.

@@ -14,7 +14,7 @@ Overview
  Load data and select sample
 ********************************************************************************/
 
-	use 			"${clean_data}\movilidad_final.dta", clear
+	use 			"${data_clean}\movilidad_final.dta", clear
 	
 /*******************************************************************************
  Clean date variable to be used as label in x axis
@@ -44,6 +44,6 @@ Overview
 						ylabel(, format(%2.1fc)) ///
 						xscale(r(0 82) titlegap(8pt)) xlabel(1 20 40 60 80, valuelabel labsize(small)) ///
 						ytitle("Mobility") xtitle("Week") ///
-						note("Note: This figure displays the mean of the mobility measure across counties for each week spanning from March 2020 to September 2021, along with their" "95% confidence interval.", span size(vsmall))
+						note("Note: This figure displays the mean of the mobility measure across counties for each week spanning from March 2020 to September 2021, along with their" "95% confidence interval. Observations are weighted by population size.", span size(vsmall))
 						
 	graph 			export "${results}\Figure2.png", replace

@@ -1,6 +1,5 @@
 /*******************************************************************************
 ********************************************************************************
-********************************************************************************
 Purpose: 				Prepare data for analysis
 						
 						Author: Leonor Castro
@@ -11,21 +10,21 @@ Overview
 		- with first shot
 		- with unique shot
 		- combine both data
-	3. Data on the number of vaccination centers per county
-	4. Data on population projections for 2020
-	5. Data on the "Plan Paso a Paso" and lockdowns
-	6. Numer of fatalities per day and county 
-	7. Numer of fatalities per cohort, day, and county 
-	8. Number of COVID cases per day and county
-	9. Mobility data
-	10. Data on the 2020 influenza vaccination campaign
-	11. Legal entities registration
-	12. Turnout
+	2. Data on the number of vaccination centers per county
+	3. Data on population projections for 2020
+	4. Data on the "Plan Paso a Paso" and lockdowns
+	5. Numer of fatalities per day and county 
+	6. Numer of fatalities per cohort, day, and county 
+	7. Number of COVID cases per day and county
+	8. Mobility data
+	9. Data on the 2020 influenza vaccination campaign
+	10. Legal entities registration
+	11. Turnout
 		- 2017
 		- 2020
-	13. Survey data from Latinobarometro (1995-2018)
-	14. Final Main Dataset
-	15. Final Secondary Datasets
+	12. Survey data from Latinobarometro (1995-2018)
+	13. Final Main Dataset
+	14. Final Secondary Datasets
 		- Latinobarometro
 		- 1970 Health Statistics (county level)
 		- 1970 Health Statistics (area level)
@@ -238,7 +237,7 @@ Overview
 	save 				"${data_clean}\vacunacion.dta", replace
 
 /*******************************************************************************
- 3. Data on the number of vaccination centers per county
+ 2. Data on the number of vaccination centers per county
 ********************************************************************************/
 
 	use 				"${data_raw}\establecimientos_direcc.dta", clear
@@ -262,7 +261,7 @@ Overview
 	save 				"${data_clean}\vacunacion.dta", replace
 
 /*******************************************************************************
- 4. Data on population projections for 2020 
+ 3. Data on population projections for 2020 
  Extracted from: https://www.ine.cl/estadisticas/sociales/demografia-y-vitales/proyecciones-de-poblacion
 ********************************************************************************/
 	
@@ -288,7 +287,7 @@ Overview
 	save 				"${data_clean}\proyecciones_getario.dta", replace
 
 /*******************************************************************************
- 5. Data on the "Plan Paso a Paso" and lockdowns
+ 4. Data on the "Plan Paso a Paso" and lockdowns
  Extracted from: https://github.com/MinCiencia/Datos-COVID19 (PRODUCT 74 & 29)
 ********************************************************************************/
 
@@ -362,7 +361,7 @@ Overview
 	erase				"${data_clean}\paso_a_paso.dta"
 	
 /*******************************************************************************
- 6. Numer of fatalities per day and county 
+ 5. Numer of fatalities per day and county 
  Extracted from: https://github.com/MinCiencia/Datos-COVID19
 ********************************************************************************/
 
@@ -395,7 +394,7 @@ Overview
 	save 			"${data_clean}\fallecidos.dta", replace
 
 /*******************************************************************************
- 7. Numer of fatalities cohort, per day, and county 
+ 6. Numer of fatalities cohort, per day, and county 
  Extracted from: https://github.com/MinCiencia/Datos-COVID19 (product 84)
 ********************************************************************************/
 	
@@ -434,7 +433,7 @@ Overview
 	save 			"${data_clean}\fallecidos_comuna_edad.dta", replace
 
 /*******************************************************************************
- 8. Number of COVID cases per day and county
+ 7. Number of COVID cases per day and county
  Extracted from: https://github.com/MinCiencia/Datos-COVID19
 ********************************************************************************/
 
@@ -466,7 +465,7 @@ Overview
 	save 			"${data_clean}\casos_incrementales.dta", replace
 
 /*******************************************************************************
- 9. Mobility data
+ 8. Mobility data
  Extracted from: https://github.com/MinCiencia/Datos-COVID19/tree/master/output/producto33
 ********************************************************************************/
 
@@ -551,7 +550,7 @@ Overview
 	save 			"${data_clean}\movilidad_isci.dta", replace
 
 /*******************************************************************************
- 10. Data on the 2020 influenza vaccination campaign
+ 9. Data on the 2020 influenza vaccination campaign
 *Extracted form: http://cognos.deis.cl/ibmcognos/cgi-bin/cognos.cgi?b_action=cognosViewer&ui.action=run&ui.object=%2fcontent%2ffolder%5b%40name%3d%27PUB%27%5d%2ffolder%5b%40name%3d%27REPORTES%27%5d%2ffolder%5b%40name%3d%27Inmunizacion%20Influenza%27%5d%2freport%5b%40name%3d%27Campa%c3%b1a%202020%20-%20Cobertura%27%5d&ui.name=Campa%c3%b1a%202020%20-%20Cobertura&cv.toolbar=false&cv.header=false&run.outputFormat=&run.prompt=false
 ********************************************************************************/
 
@@ -626,7 +625,7 @@ Overview
 	save 					"${data_clean}\camp_inf_nacional.dta", replace
 
 /*******************************************************************************
-11. Legal entities registration
+ 10. Legal entities registration
 ********************************************************************************/
 
 	foreach 				region in Tarapaca Antofagasta Atacama Coquimbo ///
@@ -681,7 +680,7 @@ Overview
 	save 					"${data_clean}\personas_juridicas.dta", replace
 
 /*******************************************************************************
- 12. Turnout
+ 11. Turnout
 ********************************************************************************/
 /*
 Note: had to run this section and store original turnout dataset off Github 
@@ -754,7 +753,7 @@ because of raw dataset is too large and can't be store on Github
 */
 
 /*******************************************************************************
- 13. Survey data from Latinobarometro (1995-2018)
+ 12. Survey data from Latinobarometro (1995-2018)
 ********************************************************************************/
 
 * 1997
@@ -2136,7 +2135,7 @@ because of raw dataset is too large and can't be store on Github
 	save 				"${data_clean}\latinobarometro_final.dta", replace
 
 /*******************************************************************************
- 14. Final Main Dataset
+ 13. Final Main Dataset
 ********************************************************************************/
 
 * The created DB are merged
@@ -2195,6 +2194,15 @@ because of raw dataset is too large and can't be store on Github
 		gen 				`var'_impy1 = `var'*impy1
 		gen 				`var'_impy2 = `var'*impy2
 	}
+	
+* Clean missing values in control variables
+	foreach				var of varlist Pop70 sh_rural_70 ///
+							share_allende70 share_alessandri70 {
+		gen					`var'_cond = `var'
+		gen					`var'_miss = missing(`var')
+		sum					`var'
+		replace				`var'_cond = `r(mean)' if `var'_miss == 1
+	}
 
 * Variabel labels
 	label var 			sh_vac_may23 "Vaccination rate at May 23"
@@ -2222,7 +2230,7 @@ because of raw dataset is too large and can't be store on Github
 	save 				"${data_clean}\finaldataset_main.dta", replace
 	
 /*******************************************************************************
- 14. Final Secondary Datasets
+ 15. Final Secondary Datasets
 ********************************************************************************/
 
 	use 				"${data_clean}\finaldataset_main.dta", clear
@@ -2245,6 +2253,15 @@ because of raw dataset is too large and can't be store on Github
 							latitud longitud code casos_prevac p_jur DMilfac50 ///
 							DMilfac100 DMilfacmean n_locales fall_prevac, ///
 							by(comuna cohort)
+							
+* Clean missing values in control variables
+	foreach				var of varlist Pop70 sh_rural_70 ///
+							share_allende70 share_alessandri70 {
+		gen					`var'_cond = `var'
+		gen					`var'_miss = missing(`var')
+		sum					`var'
+		replace				`var'_cond = `r(mean)' if `var'_miss == 1
+	}
 							
 	tempfile        	main_countycohort
 	save            	`main_countycohort'
@@ -2276,6 +2293,15 @@ because of raw dataset is too large and can't be store on Github
 	gen 				sh_fall_prevac=fall_prevac/p_proj
 	gen 				sh_casos_prevac=casos_prevac/p_proj
 	
+* Clean missing values in control variables
+	foreach				var of varlist Pop70 sh_rural_70 ///
+							share_allende70 share_alessandri70 {
+		gen					`var'_cond = `var'
+		gen					`var'_miss = missing(`var')
+		sum					`var'
+		replace				`var'_cond = `r(mean)' if `var'_miss == 1
+	}
+	
 * Variabel labels
 	label var 			ln_dist_mil_fac_impy1_county "Ln distance to military facility $\times$ County Imp. Years (1973-1990)"
 	label var 			ln_dist_mil_fac_impy2_county "Ln distance to military facility $\times$ County Imp. Years (1973-1976)"
@@ -2283,8 +2309,7 @@ because of raw dataset is too large and can't be store on Github
 	label var 			Dregimientos_impy2_county "Indicator military presence $\times$ County Imp. Years (1973-1976)"
 	label var 			sh_p_jur "Legal entities per 1,000 inhab."
 
-	tempfile        	main_county
-	save            	`main_county'
+	save 				"${data_clean}\finaldataset_countylevel.dta", replace
 
 * LATINOBAROMETRO
 	use 				"${data_clean}\latinobarometro_final.dta", clear
@@ -2295,7 +2320,7 @@ because of raw dataset is too large and can't be store on Github
 
 * 1970 HEALTH STATISTICS (county level)
 	import 				excel "${data_raw}\salud_1971.xlsx", sheet("Sheet3") firstrow clear
-	merge 				m:1 comuna using `main_county', ///
+	merge 				m:1 comuna using "${data_clean}\finaldataset_countylevel", ///
 							keep(match using) nogen
 							
 * Collapse data at county level
@@ -2309,7 +2334,7 @@ because of raw dataset is too large and can't be store on Github
 * Create share variables 
 	gen 				sh_consultas=consultas/Pop70
 	gen 				sh_leche=leche/Pop70
-	
+		
 * Variable labels 
 	label var 			sh_consultas "Medical appointments per capita in 1971"
 	label var 			sh_leche "Kg of milk distributed per capita in 1971"
@@ -2355,7 +2380,7 @@ because of raw dataset is too large and can't be store on Github
 
 * MOBILITY
 	use 				"${data_clean}\movilidad_isci.dta", clear
-	merge 				m:1 comuna using `main_county', nogen
+	merge 				m:1 comuna using "${data_clean}\finaldataset_countylevel", nogen
 	
 * Create lockdown, critic periods indicators, and interactions
 	gen 				fase_1 = 0
@@ -2439,7 +2464,7 @@ because of raw dataset is too large and can't be store on Github
 
 * INFLUENZA VACCINATION CAMPAING
 	use 				"${data_clean}\camp_inf_nacional.dta", clear
-	merge 				m:1 comuna using `main_county', nogen
+	merge 				m:1 comuna using "${data_clean}\finaldataset_countylevel", nogen
 
 * Variable labels
 	label 				var ln_dist_mil_fac_impy2_county "Ln distance to military facility $\times$ County Imp. Years (1973-1976)"
