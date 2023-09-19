@@ -7,6 +7,7 @@ Purpose: 				Create Table 3: Military Presence and State Repression
 
 Overview
 	- Load county-level data
+	- Set variable labels
 	- Run regressions 
 	- Create and export table
 	
@@ -17,8 +18,16 @@ Overview
 	use 			"${data_clean}\finaldataset_countylevel.dta", clear
 	
 /*******************************************************************************
+ Set variable labels
+********************************************************************************/
+  
+	label 				var ln_dist_mil_fac "Ln(dist. to military facility)"
+	
+/*******************************************************************************
  Run regressions
 ********************************************************************************/
+
+	eststo			clear
 
 	foreach 		var of varlist $strep_vars {								// loop over outcomes
 	
@@ -54,7 +63,7 @@ Overview
 	esttab			using "${results}/Table3.tex", ///
 						replace nocons b(4) se(4) label nonotes nomtitles ///	
 						keep(ln_dist_mil_fac) ///
-						star(* .0.05 ** .01 *** .001) ///
+						star(* .05 ** .01 *** .001) ///
 						mgroups("Victims per 1,000 inhab." "Any victims" "Any detention centers" "Ln(1 + detention centers)", ///
 						pattern(1 0 1 0 1 0 1 0) ///
 						prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span})) ///

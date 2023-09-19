@@ -1,0 +1,16 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{5}{c}}
+\hline\hline
+                    &\multicolumn{5}{c}{Vaccination rate}                                                                         \\\cmidrule(lr){2-6}
+                    &\multicolumn{1}{c}{(1)}         &\multicolumn{1}{c}{(2)}         &\multicolumn{1}{c}{(3)}         &\multicolumn{1}{c}{(4)}         &\multicolumn{1}{c}{(5)}         \\
+\hline
+\specialcell{State repression $\times$ \twoback Imp. Years (1973-1976)}&      0.0000         &     -0.0086\sym{**} &      0.0072         &     -0.0004         &      0.0039\sym{***}\\
+                    &    (0.0020)         &    (0.0032)         &    (0.0037)         &    (0.0031)         &    (0.0010)         \\
+\hline
+\# observations     &       13800         &       16197         &       16197         &       16197         &       15897         \\
+\# counties         &         324         &         324         &         324         &         324         &         324         \\
+Mean outcome        &      0.7980         &      0.7980         &      0.7980         &      0.7980         &      0.7980         \\
+Mean state repression measure&      0.2596         &      0.5804         &      0.7995         &      0.9073         &      3.0368         \\
+State repression measure&\specialcell{Victims per \twoback 1,000 inhab.}         &\specialcell{Any \twoback victims}         &\specialcell{Any det. \twoback centers}         &\specialcell{Ln(1 + \twoback det. centers)}         &Ln(dist. to \twoback military facility)}         \\
+\hline\hline \multicolumn{6}{p{25cm}}{\footnotesize * p$<$0.05, ** p$<$0.01, *** p$<$0.001. Note: Unit of observation: county $\times$ cohort. This table reports OLS coefficient estimates of exposure to state repression over accumulated vaccination rates until May 23, 2021 from equation (\ref{eq:1}), which includes cohort and county fixed-effects. All estimations use the number of years between 18 and 25 lived between 1973 and 1976 as the impressionable years indicator, and state repression indicators for each column are indicated in the bottom row. Observations are weighted by 2020 county-cohort population size, and observations from counties with aggregated vaccination rates greater than one are dropped. Conley standard errors in parentheses.}\\ \end{tabular} } % Generated on 18 Sep 2023 at 22:51:15.

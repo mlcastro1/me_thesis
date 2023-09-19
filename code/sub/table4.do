@@ -17,6 +17,7 @@ Overview
 ********************************************************************************/
 
 	use 				"${data_clean}\finaldataset_main.dta", clear
+	
 /*******************************************************************************
  Create additional variables specific to this dofile
 ********************************************************************************/
@@ -26,11 +27,11 @@ Overview
 /*******************************************************************************
  Set variable labels
 ********************************************************************************/
-
-	label 				var "\specialcell{Victims per \twoback 1,000 inhab.}"
-	label 				var "\specialcell{Any \twoback victims}" 
-	label 				var "\specialcell{Any det. \twoback centers}" 
-	label 				var "\specialcell{Ln(1 + \twoback det. centers)}"
+  
+	label 				var shVictims_70_10 "\specialcell{Victims per \twoback 1,000 inhab.}"
+	label 				var DVictims "\specialcell{Any \twoback victims}" 
+	label 				var DCentroDetencion "\specialcell{Any det. \twoback centers}" 
+	label 				var ln_centro_det "\specialcell{Ln(1 + \twoback det. centers)}"
 	label 				var ln_dist_mil_fac "Ln(dist. to \twoback military facility)}"
 	label				var strep_aux "\specialcell{State repression $\times$ \twoback Imp. Years (1973-1976)}"
 	
@@ -40,7 +41,7 @@ Overview
 
 	eststo				clear
 
-	foreach 			var in ${strep_vars} {
+	foreach 			var of varlist $strep_vars_all {
 		
 		replace				strep_aux = `var'_impy2
 		
@@ -53,10 +54,10 @@ Overview
 		estadd				scalar N_counties = `r(ndistinct)'
 		sum					sh_vac_may23 if e(sample)
 		estadd				scalar ymean = `r(mean)'
-		estadd				scalar `var' if e(sample)
+		sum					`var' if e(sample)
 		estadd				scalar xmean = `r(mean)'
-		local 				vname : var label `var'							
-		estadd				scalar strepvar `vname'
+		local 				vname : var label `var'					
+		estadd				local strepvar "`vname'"
 	}
 
 /*******************************************************************************
@@ -66,7 +67,7 @@ Overview
 	esttab			using "${results}/Table4.tex", ///
 						replace nocons b(4) se(4) label nonotes nomtitles ///	
 						keep(strep_aux) ///
-						star(* .0.05 ** .01 *** .001) ///
+						star(* .05 ** .01 *** .001) ///
 						mgroups("Vaccination rate", ///
 						pattern(1 0 0 0 0) ///
 						prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span})) ///
@@ -74,4 +75,4 @@ Overview
 						labels("\# observations" "\# counties" "Mean outcome" "Mean state repression measure" "State repression measure") ///
 						fmt(%4.0f %4.0f %9.4f %9.4f 0)) ///
 						postfoot("\hline\hline \multicolumn{@span}{p{25cm}}{\footnotesize @note}\\ \end{tabular} } % Generated on $S_DATE at $S_TIME.") ///
-						note(* p$<$0.05, ** p$<$0.01, *** p$<$0.001. Note: Unit of observation: county $\times$ cohort. This table reports OLS coefficient estimates of exposure to state repression over accumulated vaccination rates until May 23, 2021 from equation (1), which includes cohort and county fixed-effects. All estimations use the number of years between 18 and 25 lived between 1973 and 1976 as the impressionable years indicator, and state repression indicators for each column are indicated in the bottom row. Observations are weighted by 2020 county-cohort population size, and observations from counties with aggregated vaccination rates greater than one are dropped. Conley standard errors in parentheses.) 
+						note(* p$<$0.05, ** p$<$0.01, *** p$<$0.001. Note: Unit of observation: county $\times$ cohort. This table reports OLS coefficient estimates of exposure to state repression over accumulated vaccination rates until May 23, 2021 from equation (\ref{eq:1}), which includes cohort and county fixed-effects. All estimations use the number of years between 18 and 25 lived between 1973 and 1976 as the impressionable years indicator, and state repression indicators for each column are indicated in the bottom row. Observations are weighted by 2020 county-cohort population size, and observations from counties with aggregated vaccination rates greater than one are dropped. Conley standard errors in parentheses.) 

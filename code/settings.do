@@ -24,7 +24,9 @@ Do-file overview:
 ********************************************************************************/
 
 	global 				strep_vars shVictims_70_10 DVictims DCentroDetencion ///
-							ln_centro_det ln_dist_mil_fac
+							ln_centro_det 
+							
+	global				strep_vars_all ${strep_vars} ln_dist_mil_fac
 							
 	global 				controls Pop70_cond sh_rural_70_cond lnDistStgo lnDistRegCapital ///
 							share_allende70_cond share_alessandri70_cond ///
