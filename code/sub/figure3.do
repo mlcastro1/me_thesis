@@ -13,7 +13,7 @@ Overview
  Load data and select sample
 ********************************************************************************/
 
-	use 			"${clean_data}\victimsbyyear.dta", clear
+	use 			"${data_clean}\victimsbyyear.dta", clear
 
 /*******************************************************************************
  Create and export figure
