@@ -2242,7 +2242,7 @@ because of raw dataset is too large and can't be store on Github
 
 *Collapse data at county x cohort level
 	collapse 			(sum) p_proj vac_acc_may23 vac_ontime4 ///
-							(max) impy1 impy2 impy1_county impy2_county ///
+							(max) impy1 impy2 impy1_county impy2_county *_impy2 ///
 							shVictims_70 shVictims_70_10 DVictims ///
 							DCentroDetencion CentroDetencion ln_centro_det Dregimientos ///
 							ln_dist_mil_fac Pop70 sh_rural_70 lnDistStgo lnDistRegCapital ///

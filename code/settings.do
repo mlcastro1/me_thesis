@@ -49,6 +49,9 @@ Do-file overview:
 	global 				health_balance_vars_area sh_antivariolica sh_antitifica ///
 							sh_antidifterica sh_mixta sh_antipoliomielitica ///
 							sh_antisarampionosa sh_antiinlfuenza
+							
+	global 				latinob_vars sp21 sp63a sp63b sp63d sp63e sp63g P20ST_I ///
+							P16ST_G p63stc
 
 /*******************************************************************************
  Figure settings
