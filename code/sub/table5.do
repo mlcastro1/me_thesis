@@ -43,7 +43,7 @@ Overview
 
 	eststo				clear
 
-	foreach 			var in $strep_vars {
+	foreach 			var in $strep_vars_all {
 		
 		replace				strep_aux = `var'_f1_impy2
 		
@@ -51,6 +51,8 @@ Overview
 								i.semana i.code [pw = ${W}], ${conley_se} 
 		eststo
 		
+		distinct			code if e(sample)
+		estadd				scalar N_counties = `r(ndistinct)'
 		sum					var_salidas if e(sample) 
 		estadd				scalar ymean = `r(mean)'
 		sum					`var' if e(sample)
@@ -72,6 +74,6 @@ Overview
 						prefix(\multicolumn{@span}{c}{) suffix(}) span erepeat(\cmidrule(lr){@span})) ///
 						stats( N N_counties ymean xmean strepvar, ///
 						labels("\# observations" "\# counties" "Mean outcome" "Mean state repression measure" "State repression measure") ///
-						fmt(%4.0f %9.4f %9.4f 0)) ///
+						fmt(%4.0f %4.0f %9.4f %9.4f 0)) ///
 						postfoot("\hline\hline \multicolumn{@span}{p{25cm}}{\footnotesize @note}\\ \end{tabular} } % Generated on $S_DATE at $S_TIME.") ///
 						note(* p$<$0.05, ** p$<$0.01, *** p$<$0.001. Note: Unit of observation: county $\times$ week. This table reports OLS coefficient estimates of exposure to state repression over mobility during lockdown days from equation (\ref{eq:2}), which includes county and week fixed-effects. All estimations use the number of years between 18 and 25 lived between 1973 and 1976 as impressionable years indicators and state repression indicators for each column are indicated in the last row. Observations are weighted by 2020 county population size. Conley standard errors in parentheses.) 
