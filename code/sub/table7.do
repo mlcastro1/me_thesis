@@ -17,11 +17,15 @@ Overview
 ********************************************************************************/
 
 	use 				"${data_clean}\movilidad_final.dta", clear
-	keep				if semana > 10 & semana < 34							// restrict to relevant period
+	keep				if semana < 34 											// restrict to relevant period
 	
 /*******************************************************************************
  Set variable labels
 ********************************************************************************/
+
+	label				var ln_dist_mil_fac_impy2cp "\specialcell{Ln distance to military facility $\times$ County Imp. Years (1973-1976) \twoback $\times$ Critical Period}"
+	label				var ln_dist_mil_fac_impy2cp1 "\specialcell{Ln distance to military facility $\times$ County Imp. Years (1973-1976) \twoback $\times$ Critical Period 1}"
+	label				var ln_dist_mil_fac_impy2cp2 "\specialcell{Ln distance to military facility $\times$ County Imp. Years (1973-1976) \twoback $\times$ Critical Period 2}"
 
 /*******************************************************************************
  Run regressions

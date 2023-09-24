@@ -66,17 +66,9 @@ Additional notes:
 		acreg 				z_`var'_v2 ln_dist_mil_fac_impy2 ///
 								i.cohort i.code i.numinves s1 ///
 								if cohort>30 [pw = wt], ${conley_se}
-		eststo				`var'
 		
 		qui: test			ln_dist_mil_fac_impy2
 		local 				`var'_pv = `r(p)'									// store p-value to then estimate q-values
-		
-		distinct			code if e(sample)
-		estadd				scalar N_counties = `r(ndistinct)'
-		sum					z_`var'_v2 if e(sample) 
-		estadd				scalar ymean = `r(mean)'
-		sum					ln_dist_mil_fac if e(sample)
-		estadd				scalar xmean = `r(mean)'
 		
 	} // end of var
 
@@ -166,9 +158,20 @@ Additional notes:
  Add q-values to stored estimations
 ********************************************************************************/
 
-	foreach 		var of varlist $latinob_vars {								// loop over etsimations
-		
-		estadd 			scalar adjusted_pv ``var'_apv': `var'
+	foreach 			var of varlist $latinob_vars {							// loop over outcomes
+	
+		acreg 				z_`var'_v2 ln_dist_mil_fac_impy2 ///
+								i.cohort i.code i.numinves s1 ///
+								if cohort>30 [pw = wt], ${conley_se}
+		eststo				
+				
+		distinct			code if e(sample)
+		estadd				scalar N_counties = `r(ndistinct)'
+		sum					z_`var'_v2 if e(sample) 
+		estadd				scalar ymean = `r(mean)'
+		sum					ln_dist_mil_fac if e(sample)
+		estadd				scalar xmean = `r(mean)'
+		estadd 				scalar adjusted_pv ``var'_apv'
 		
 	} // end of var
 	

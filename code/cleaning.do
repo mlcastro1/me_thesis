@@ -2437,7 +2437,7 @@ because of raw dataset is too large and can't be store on Github
 	label var 			sh_casos_prevac "Sh. COVID cases"
 	label var 			sh_fall_prevac "Sh. COVID deaths"
 	
-	save 				"${data_clean}\movilidad_final.dta", replace
+*	save 				"${data_clean}\movilidad_final.dta", replace
 
 * FATALITIES
 	use 				"${data_clean}\finaldataset_main.dta"
