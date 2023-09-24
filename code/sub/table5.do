@@ -18,7 +18,6 @@ Overview
 ********************************************************************************/
 
 	use 				"${data_clean}\movilidad_final.dta", clear
-	keep				if semana > 10											// restrict sample to relevant period
 
 /*******************************************************************************
  Create additional variables specific to this dofile
