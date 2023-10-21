@@ -77,7 +77,8 @@ graph export "FigureA2v2.pdf", as(pdf) name("Graph") replace
 ********************************************************************************
 *Table A1, A2 & A3, Figure A2: other impressionable years and military presence indicators, other vaccination measure
 ********************************************************************************
-use "$path\FinalDataset_Vaccination.dta", clear
+use "${data_clean}\finaldataset_main.dta", clear
+/*
 preserve
 	collapse (mean) sh_vac_may23 sh_vac_ontime4 if main_sample==1 [pw=$W], by(cohort)
 	twoway connected sh_vac_may23 sh_vac_ontime4 cohort, yline(1) msymbol(i i) xtitle("Cohort") ytitle("Vaccination Rate") legend(label(1 "Vaccination rate at May 23")) legend(label(2 "On-time vaccination rate"))
@@ -91,14 +92,14 @@ foreach strep_var in $strep_vars {
 }
 esttab using TableA1.tex, b(%9.4f) se(%9.4f) drop(*.cohort *.code _cons) se rename(shVictims_70_10_impy2 strep_impy2 DVictims_impy2 strep_impy2 CentroDetencion_impy2 strep_impy2 ln_dist_mil_fac_impy2 strep_impy2) coeflabels(strep_impy2 "State repression $\times$ Imp. Years (1973-1976)")  replace
 eststo clear 
-
+*/
 foreach strep_var in $strep_vars {
 	acreg sh_vac_may23 `strep_var'_impy1 i.cohort i.code if main_sample==1 [pw=$W], $se
 	eststo
 }
 esttab using TableA2.tex, b(%9.4f) se(%9.4f) drop(*.cohort *.code _cons) se rename(shVictims_70_10_impy1 strep_impy1 DVictims_impy1 strep_impy1 CentroDetencion_impy1 strep_impy1 ln_dist_mil_fac_impy1 strep_impy1) coeflabels(strep_impy1 "State repression $\times$ Imp. Years (1973-1976)") replace
 eststo clear 
-
+/*
 use "$path\movilidad_final.dta", clear
 foreach strep_var in $strep_vars {
 	acreg var_salidas `strep_var'_f1_impy1 `strep_var'_f1 f1_impy1 fase_1 i.semana i.code if semana>10 [pw=$W], $se 

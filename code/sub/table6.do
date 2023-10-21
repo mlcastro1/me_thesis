@@ -60,7 +60,7 @@ Additional notes:
 /*******************************************************************************
  Run regressions
 ********************************************************************************/
-
+/*
 	foreach 			var of varlist $latinob_vars {							// loop over outcomes
 	
 		acreg 				z_`var'_v2 ln_dist_mil_fac_impy2 ///
@@ -157,7 +157,7 @@ Additional notes:
 /*******************************************************************************
  Add q-values to stored estimations
 ********************************************************************************/
-
+*/
 	foreach 			var of varlist $latinob_vars {							// loop over outcomes
 	
 		acreg 				z_`var'_v2 ln_dist_mil_fac_impy2 ///
@@ -171,7 +171,7 @@ Additional notes:
 		estadd				scalar ymean = `r(mean)'
 		sum					ln_dist_mil_fac if e(sample)
 		estadd				scalar xmean = `r(mean)'
-		estadd 				scalar adjusted_pv ``var'_apv'
+*		estadd 				scalar adjusted_pv ``var'_apv'
 		
 	} // end of var
 	
@@ -184,7 +184,7 @@ Additional notes:
 						keep(ln_dist_mil_fac_impy2) ///
 						star(* .05 ** .01 *** .001) ///
 						prehead("\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi} \\ \begin{tabular}{l*{9}{c}} \\ \hline\hline &\multicolumn{9}{c}{Mistrust in} \\") ///
-						stats( N N_counties ymean xmean adjusted_pv, ///
+						stats( N N_counties ymean xmean, ///
 						labels("\# observations" "\# counties" "Mean outcome" "Mean state repression measure" "Adjusted p-values") ///
 						fmt(%4.0f %4.0f %9.4f %9.4f %9.4f)) ///
 						postfoot("\hline\hline \multicolumn{@span}{p{25cm}}{\footnotesize @note}\\ \end{tabular} } % Generated on $S_DATE at $S_TIME.") ///
